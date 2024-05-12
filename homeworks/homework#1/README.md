@@ -2,5 +2,5 @@
 
 ### Схема сети.
 
-![] (images/layout#1)
+![layout #1](layout#1.png)
 
