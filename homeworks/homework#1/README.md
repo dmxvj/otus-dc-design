@@ -134,3 +134,27 @@ interface Loopback1
 !  
 +++++++++++++++++++++++++++++++  
 
+Leaf3#show run  
+!  
+hostname Leaf3  
+!  
+interface Ethernet1  
+   description to-Spine1  
+   mtu 9214  
+   no switchport  
+   ip address 10.1.1.5/31  
+!  
+interface Ethernet2  
+   description to-Spine2  
+   mtu 9214  
+   no switchport  
+   ip address 10.1.2.5/31  
+!  
+interface Loopback0  
+   ip address 10.0.0.33/32  
+!  
+interface Loopback1  
+   ip address 10.0.0.133/32  
+!  
+
+### Ping
