@@ -183,5 +183,28 @@ PING 10.1.1.5 (10.1.1.5) 8972(9000) bytes of data.
 2 packets transmitted, 2 received, 0% packet loss, time 6ms  
 rtt min/avg/max/mdev = 4.305/5.096/5.887/0.791 ms, ipg/ewma 6.779/5.689 ms  
 Spine1#  
-
-
+  
+Spine2#ping 10.1.2.1 size 9000 df rep 2  
+PING 10.1.2.1 (10.1.2.1) 8972(9000) bytes of data.  
+8980 bytes from 10.1.2.1: icmp_seq=1 ttl=64 time=6.50 ms  
+8980 bytes from 10.1.2.1: icmp_seq=2 ttl=64 time=3.87 ms  
+--- 10.1.2.1 ping statistics ---  
+2 packets transmitted, 2 received, 0% packet loss, time 8ms  
+rtt min/avg/max/mdev = 3.877/5.190/6.503/1.313 ms, ipg/ewma 8.387/6.174 ms  
+Spine2#  
+Spine2#ping 10.1.2.3 size 9000 df rep 2  
+PING 10.1.2.3 (10.1.2.3) 8972(9000) bytes of data.  
+8980 bytes from 10.1.2.3: icmp_seq=1 ttl=64 time=17.6 ms  
+8980 bytes from 10.1.2.3: icmp_seq=2 ttl=64 time=8.65 ms  
+--- 10.1.2.3 ping statistics ---  
+2 packets transmitted, 2 received, 0% packet loss, time 12ms  
+rtt min/avg/max/mdev = 8.657/13.131/17.606/4.475 ms, pipe 2, ipg/ewma 12.343/16.487 ms  
+Spine2#  
+Spine2#ping 10.1.2.5 size 9000 df rep 2  
+PING 10.1.2.5 (10.1.2.5) 8972(9000) bytes of data.  
+8980 bytes from 10.1.2.5: icmp_seq=1 ttl=64 time=17.1 ms  
+8980 bytes from 10.1.2.5: icmp_seq=2 ttl=64 time=7.74 ms  
+--- 10.1.2.5 ping statistics ---  
+2 packets transmitted, 2 received, 0% packet loss, time 11ms  
+rtt min/avg/max/mdev = 7.741/12.454/17.167/4.713 ms, pipe 2, ipg/ewma 11.699/15.988 ms  
+Spine2#  
