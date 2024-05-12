@@ -26,14 +26,14 @@
 ### Настройки нодов
 
 #### Spine1
-Spine1#show run
-hostname Spine1
-interface Ethernet1
-   description to-Leaf1
-   mtu 9214
-   no switchport
-   ip address 10.1.1.0/31
-interface Ethernet2
+Spine1#show run  
+hostname Spine1  
+interface Ethernet1  
+   description to-Leaf1  
+   mtu 9214  
+   no switchport  
+   ip address 10.1.1.0/31  
+interface Ethernet2  
    description to-Leaf2
    mtu 9214
    no switchport
