@@ -2,7 +2,7 @@
 
 ### Схема сети.
 
-![](layout#1.png)
+![alt-text](layout#1.png)
 
 
 
