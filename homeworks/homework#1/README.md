@@ -56,7 +56,7 @@ interface Loopback1
 
 ++++++++++++++++++++++++++++++
 
-Spine2#sh run  
+Spine2#show run  
 !  
 hostname Spine2     
 !  
@@ -85,3 +85,28 @@ interface Loopback1
    ip address 10.0.0.102/32  
 !  
 +++++++++++++++++++++++++++++++
+
+Leaf1#show run  
+!  
+hostname Leaf1  
+!  
+interface Ethernet1  
+   description to-Spine1  
+   mtu 9214  
+   no switchport  
+   ip address 10.1.1.1/31  
+!  
+interface Ethernet2  
+   description to-Spine2  
+   mtu 9214  
+   no switchport  
+   ip address 10.1.2.1/31  
+!  
+interface Loopback0  
+   ip address 10.0.0.11/32  
+!  
+interface Loopback1  
+   ip address 10.0.0.111/32  
+!  
++++++++++++++++++++++++++++++++
+
