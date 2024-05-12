@@ -108,7 +108,7 @@ interface Loopback0
 interface Loopback1  
    ip address 10.0.0.111/32  
 !  
-+++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++  
 
 Leaf2#show run  
 !  
@@ -125,12 +125,12 @@ interface Ethernet2
    mtu 9214  
    no switchport  
    ip address 10.1.2.3/31  
-!
+!  
 interface Loopback0  
    ip address 10.0.0.22/32  
 !  
 interface Loopback1  
    ip address 10.0.0.122/32  
 !  
-+++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++  
 
