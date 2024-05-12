@@ -26,31 +26,60 @@
 ### Настройки нодов
 
 Spine1#show run 
-
+!  
 hostname Spine1  
-
+!  
 interface Ethernet1  
    description to-Leaf1  
    mtu 9214  
    no switchport  
    ip address 10.1.1.0/31  
-
+!  
 interface Ethernet2  
    description to-Leaf2  
    mtu 9214  
    no switchport  
    ip address 10.1.1.2/31  
-
+!  
 interface Ethernet3  
    description to-Leaf3  
    mtu 9214  
    no switchport  
    ip address 10.1.1.4/31  
-
+!  
 interface Loopback0  
    ip address 10.0.0.1/32  
-
+!  
 interface Loopback1  
    ip address 10.0.0.101/32  
+!  
 
 
+Spine2#sh run  
+!  
+hostname Spine2     
+!  
+interface Ethernet1  
+   description to-Leaf1    
+   mtu 9214  
+   no switchport  
+   ip address 10.1.2.0/31  
+!  
+interface Ethernet2  
+   description to-Leaf2  
+   mtu 9214  
+   no switchport  
+   ip address 10.1.2.2/31  
+!  
+interface Ethernet3  
+   description to-Leaf3  
+   mtu 9214  
+   no switchport  
+   ip address 10.1.2.4/31  
+!  
+interface Loopback0  
+   ip address 10.0.0.2/32  
+!  
+interface Loopback1  
+   ip address 10.0.0.102/32  
+!  
