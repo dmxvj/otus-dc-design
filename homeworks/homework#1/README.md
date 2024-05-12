@@ -31,19 +31,19 @@ hostname Spine1
 !  
 interface Ethernet1  
    description to-Leaf1  
-   mtu 9214  
+   mtu 9000   
    no switchport  
    ip address 10.1.1.0/31  
 !  
 interface Ethernet2  
    description to-Leaf2  
-   mtu 9214  
+   mtu 9000  
    no switchport  
    ip address 10.1.1.2/31  
 !  
 interface Ethernet3  
    description to-Leaf3  
-   mtu 9214  
+   mtu 9000  
    no switchport  
    ip address 10.1.1.4/31  
 !  
@@ -62,19 +62,19 @@ hostname Spine2
 !  
 interface Ethernet1  
    description to-Leaf1    
-   mtu 9214  
+   mtu 9000  
    no switchport  
    ip address 10.1.2.0/31  
 !  
 interface Ethernet2  
    description to-Leaf2  
-   mtu 9214  
+   mtu 9000  
    no switchport  
    ip address 10.1.2.2/31  
 !  
 interface Ethernet3  
    description to-Leaf3  
-   mtu 9214  
+   mtu 9000  
    no switchport  
    ip address 10.1.2.4/31  
 !  
@@ -92,13 +92,13 @@ hostname Leaf1
 !  
 interface Ethernet1  
    description to-Spine1  
-   mtu 9214  
+   mtu 9000  
    no switchport  
    ip address 10.1.1.1/31  
 !  
 interface Ethernet2  
    description to-Spine2  
-   mtu 9214  
+   mtu 9000  
    no switchport  
    ip address 10.1.2.1/31  
 !  
@@ -116,13 +116,13 @@ hostname Leaf2
 !  
 interface Ethernet1  
    description to-Spine1  
-   mtu 9214  
+   mtu 9000  
    no switchport  
    ip address 10.1.1.3/31  
 !  
 interface Ethernet2  
    description to-Spine2  
-   mtu 9214  
+   mtu 9000  
    no switchport  
    ip address 10.1.2.3/31  
 !  
@@ -140,13 +140,13 @@ hostname Leaf3
 !  
 interface Ethernet1  
    description to-Spine1  
-   mtu 9214  
+   mtu 9000  
    no switchport  
    ip address 10.1.1.5/31  
 !  
 interface Ethernet2  
    description to-Spine2  
-   mtu 9214  
+   mtu 9000  
    no switchport  
    ip address 10.1.2.5/31  
 !  
@@ -158,3 +158,5 @@ interface Loopback1
 !  
 
 ### Ping
+
+
