@@ -2,4 +2,4 @@
 
 ### Схема сети.
 
-![](layouts/layout#1.png)
+![](layouts/layout1.png)
