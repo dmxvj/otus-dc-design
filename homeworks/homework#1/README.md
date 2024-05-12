@@ -158,5 +158,30 @@ interface Loopback1
 !  
 
 ### Ping
+  
+Spine1#ping 10.1.1.1 size 9000 df rep 2  
+PING 10.1.1.1 (10.1.1.1) 8972(9000) bytes of data.  
+8980 bytes from 10.1.1.1: icmp_seq=1 ttl=64 time=5.77 ms  
+8980 bytes from 10.1.1.1: icmp_seq=2 ttl=64 time=3.51 ms  
+--- 10.1.1.1 ping statistics ---  
+2 packets transmitted, 2 received, 0% packet loss, time 6ms  
+rtt min/avg/max/mdev = 3.517/4.646/5.775/1.129 ms, ipg/ewma 6.652/5.492 ms  
+Spine1#  
+Spine1#ping 10.1.1.3 size 9000 df rep 2   
+PING 10.1.1.3 (10.1.1.3) 8972(9000) bytes of data.  
+8980 bytes from 10.1.1.3: icmp_seq=1 ttl=64 time=5.84 ms  
+8980 bytes from 10.1.1.3: icmp_seq=2 ttl=64 time=3.44 ms  
+--- 10.1.1.3 ping statistics ---  
+2 packets transmitted, 2 received, 0% packet loss, time 6ms  
+rtt min/avg/max/mdev = 3.448/4.645/5.843/1.199 ms, ipg/ewma 6.642/5.543 ms  
+Spine1#  
+Spine1#ping 10.1.1.5 size 9000 df rep 2  
+PING 10.1.1.5 (10.1.1.5) 8972(9000) bytes of data.  
+8980 bytes from 10.1.1.5: icmp_seq=1 ttl=64 time=5.88 ms  
+8980 bytes from 10.1.1.5: icmp_seq=2 ttl=64 time=4.30 ms  
+--- 10.1.1.5 ping statistics ---  
+2 packets transmitted, 2 received, 0% packet loss, time 6ms  
+rtt min/avg/max/mdev = 4.305/5.096/5.887/0.791 ms, ipg/ewma 6.779/5.689 ms  
+Spine1#  
 
 
