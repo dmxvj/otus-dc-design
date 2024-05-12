@@ -25,7 +25,8 @@
 
 ### Настройки нодов
 
-Spine1#show run  
+Spine1#show run 
+
 hostname Spine1  
 
 interface Ethernet1  
@@ -53,16 +54,3 @@ interface Loopback1
    ip address 10.0.0.101/32  
 
 
-
-
-
-
-#### Leaf1
-
-
-
-#### Leaf2
-
-
-
-#### Leaf3
