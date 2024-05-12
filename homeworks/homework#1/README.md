@@ -25,7 +25,7 @@
 
 ### Настройки нодов
 
-Spine1#show run 
+Spine1#show run  
 !  
 hostname Spine1  
 !  
@@ -54,6 +54,7 @@ interface Loopback1
    ip address 10.0.0.101/32  
 !  
 
+++++++++++++++++++++++++++++++
 
 Spine2#sh run  
 !  
@@ -83,3 +84,4 @@ interface Loopback0
 interface Loopback1  
    ip address 10.0.0.102/32  
 !  
++++++++++++++++++++++++++++++++
