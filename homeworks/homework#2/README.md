@@ -2,7 +2,7 @@
 
 ### Схема сети.
 
-![](/main/otus-dc-design/homeworks/homework#1/layout1.png)
+![](homeworks/homework#1/layout1.png)
 
 ### План адресации.
 
