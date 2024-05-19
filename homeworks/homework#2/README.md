@@ -118,7 +118,7 @@ VRF: default
  O        10.0.0.1/32 [110/110] via 10.1.1.0, Ethernet1  
  O        10.0.0.2/32 [110/110] via 10.1.2.0, Ethernet2  
  O        10.0.0.22/32 [110/210] via 10.1.1.0, Ethernet1  
-                                via 10.1.2.0, Ethernet2  
+                                 via 10.1.2.0, Ethernet2  
  O        10.0.0.33/32 [110/210] via 10.1.1.0, Ethernet1  
                                  via 10.1.2.0, Ethernet2  
  O        10.1.1.2/31 [110/200] via 10.1.1.0, Ethernet1  
