@@ -89,7 +89,7 @@
    
 +++++++++++++++++++++++++++++++++++++++++  
 
-   Leaf1#show run | s ospf  
+    Leaf1#show run | s ospf  
      interface Ethernet1  
      ip ospf network point-to-point  
      ip ospf area 0.0.0.0  
