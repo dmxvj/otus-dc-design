@@ -83,8 +83,7 @@ router ospf 1
    passive-interface Loopback0  
    max-lsa 1000 90 warning-only  
    maximum-paths 8  
-   
-Spine1#  
+
    
 +++++++++++++++++++++++++++++++++++++++++  
 
@@ -92,11 +91,14 @@ Spine1#
 interface Ethernet1  
    ip ospf network point-to-point  
    ip ospf area 0.0.0.0  
+
 interface Ethernet2  
    ip ospf network point-to-point  
    ip ospf area 0.0.0.0  
+
 interface Loopback0  
    ip ospf area 0.0.0.0  
+   
 router ospf 1  
    router-id 10.0.0.11  
    auto-cost reference-bandwidth 100000  
