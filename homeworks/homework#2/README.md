@@ -23,6 +23,7 @@
 |  Spine1  | 10.1.1.0/31 | 10.1.1.2/31 | 10.1.1.4/31 |
 |  Spine2  | 10.1.2.0/31 | 10.1.2.2/31 | 10.1.2.4/31 |
 
+
 ### План деплоя OSPF для Underlay в домене, на всех коммутаторах.
 
 #### Запускаем процесс OSPF с определением идентификатора нода в домене.
@@ -88,24 +89,24 @@
    
 +++++++++++++++++++++++++++++++++++++++++  
 
-    Leaf1#show run | s ospf  
-   interface Ethernet1  
-   ip ospf network point-to-point  
-   ip ospf area 0.0.0.0  
+   Leaf1#show run | s ospf  
+     interface Ethernet1  
+     ip ospf network point-to-point  
+     ip ospf area 0.0.0.0  
 
-interface Ethernet2  
-   ip ospf network point-to-point  
-   ip ospf area 0.0.0.0  
+    interface Ethernet2  
+     ip ospf network point-to-point  
+     ip ospf area 0.0.0.0  
 
-interface Loopback0  
-   ip ospf area 0.0.0.0  
+    interface Loopback0  
+     ip ospf area 0.0.0.0  
 
-router ospf 1  
-   router-id 10.0.0.11  
-   auto-cost reference-bandwidth 100000  
-   passive-interface Loopback0  
-   max-lsa 1000 90 warning-only  
-   maximum-paths 4  
+    router ospf 1  
+     router-id 10.0.0.11  
+     auto-cost reference-bandwidth 100000  
+     passive-interface Loopback0  
+     max-lsa 1000 90 warning-only  
+     maximum-paths 4  
    
 #### Проверка таблицы маршрутизации, соседства нодов и связности на всех коммутаторах. 
 
