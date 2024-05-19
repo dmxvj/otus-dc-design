@@ -62,22 +62,22 @@
 ### Итоговая конфигурация.
 
     Spine1#show run | s ospf  
-      interface Ethernet1  
+    interface Ethernet1  
       ip ospf network point-to-point  
       ip ospf area 0.0.0.0  
-
-   interface Ethernet2  
+    
+    interface Ethernet2  
       ip ospf network point-to-point  
       ip ospf area 0.0.0.0  
-
-   interface Ethernet3  
-      ip ospf network point-to-point  
+   
+    interface Ethernet3
+      ospf network point-to-point  
       ip ospf area 0.0.0.0  
 
-   interface Loopback0  
+    interface Loopback0  
       ip ospf area 0.0.0.0  
 
-   router ospf 1  
+    router ospf 1  
       router-id 10.0.0.1  
       auto-cost reference-bandwidth 100000  
       passive-interface Loopback0  
