@@ -63,6 +63,7 @@
 
 ### Итоговая конфигурация.
 
+
 Spine1#show run | s ospf  
 interface Ethernet1 
    ip ospf network point-to-point 
@@ -82,6 +83,7 @@ router ospf 1
    max-lsa 1000 90 warning-only 
    maximum-paths 8 
 Spine1# 
+
 
 +++++++++++++++++++++++++++++++++++++++++ 
 
