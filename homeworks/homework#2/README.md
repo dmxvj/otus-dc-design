@@ -53,32 +53,37 @@
 #### Устанавливаем тип интерфейса p2p для core интерфейсов,  
 #### для сокращения времени установления соседства между маршрутизаторами, без выбора DR/BDR.
 
-    ip ospf network point-to-point
+        ip ospf network point-to-point
 
 #### Опционально запускаем между core интерфейсами протокол BFD для ускорения определения разрыва соединений. 
 
 #### Опционально определяем аутентификацию между core интерфейсами для безопасности установления соединений.
 
 ### Итоговая конфигурация.
-      
+     
 Spine1#show run | s ospf  
 interface Ethernet1  
    ip ospf network point-to-point  
    ip ospf area 0.0.0.0  
+
 interface Ethernet2  
    ip ospf network point-to-point  
    ip ospf area 0.0.0.0  
+
 interface Ethernet3  
    ip ospf network point-to-point  
    ip ospf area 0.0.0.0  
+
 interface Loopback0  
    ip ospf area 0.0.0.0  
+
 router ospf 1  
    router-id 10.0.0.1  
    auto-cost reference-bandwidth 100000  
    passive-interface Loopback0  
    max-lsa 1000 90 warning-only  
    maximum-paths 8  
+   
 Spine1#  
    
 +++++++++++++++++++++++++++++++++++++++++  
