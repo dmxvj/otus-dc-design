@@ -107,9 +107,15 @@ router ospf 1
    max-lsa 1000 90 warning-only  
    maximum-paths 4  
    
-#### Проверка таблицы маршрутизации и связности на всез коммутаторах. 
+#### Проверка таблицы маршрутизации, соседства нодов и связности на всех коммутаторах. 
 
 На примере показана проверке на одном коммутаторе. 
+
+Leaf1#show ip ospf neighbor 
+Neighbor ID     Instance VRF      Pri State                  Dead Time   Address         Interface  
+10.0.0.1        1        default  1   FULL                   00:00:36    10.1.1.0        Ethernet1  
+10.0.0.2        1        default  1   FULL                   00:00:31    10.1.2.0        Ethernet2  
+Leaf1#  
 
  Leaf1#show ip route ospf  
  
