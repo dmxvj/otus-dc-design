@@ -103,28 +103,28 @@ router ospf 1
 
 На примере показана проверке на одном коммутаторе. 
 
-Leaf1#show ip route ospf 
+Leaf1#show ip route ospf  
 
-VRF: default 
+VRF: default  
  
- O        10.0.0.1/32 [110/110] via 10.1.1.0, Ethernet1 
- O        10.0.0.2/32 [110/110] via 10.1.2.0, Ethernet2 
- O        10.0.0.22/32 [110/210] via 10.1.1.0, Ethernet1 
-                                 via 10.1.2.0, Ethernet2 
- O        10.0.0.33/32 [110/210] via 10.1.1.0, Ethernet1 
-                                 via 10.1.2.0, Ethernet2 
- O        10.1.1.2/31 [110/200] via 10.1.1.0, Ethernet1 
- O        10.1.1.4/31 [110/200] via 10.1.1.0, Ethernet1 
- O        10.1.2.2/31 [110/200] via 10.1.2.0, Ethernet2 
- O        10.1.2.4/31 [110/200] via 10.1.2.0, Ethernet2 
+ O        10.0.0.1/32 [110/110] via 10.1.1.0, Ethernet1  
+ O        10.0.0.2/32 [110/110] via 10.1.2.0, Ethernet2  
+ O        10.0.0.22/32 [110/210] via 10.1.1.0, Ethernet1  
+                                 via 10.1.2.0, Ethernet2  
+ O        10.0.0.33/32 [110/210] via 10.1.1.0, Ethernet1  
+                                 via 10.1.2.0, Ethernet2  
+ O        10.1.1.2/31 [110/200] via 10.1.1.0, Ethernet1  
+ O        10.1.1.4/31 [110/200] via 10.1.1.0, Ethernet1  
+ O        10.1.2.2/31 [110/200] via 10.1.2.0, Ethernet2  
+ O        10.1.2.4/31 [110/200] via 10.1.2.0, Ethernet2  
 
-Leaf1#ping 10.0.0.33 source 10.0.0.11 rep 3  
-PING 10.0.0.33 (10.0.0.33) from 10.0.0.11 : 72(100) bytes of data. 
-80 bytes from 10.0.0.33: icmp_seq=1 ttl=63 time=11.2 ms 
-80 bytes from 10.0.0.33: icmp_seq=2 ttl=63 time=7.25 ms 
-80 bytes from 10.0.0.33: icmp_seq=3 ttl=63 time=7.83 ms 
+Leaf1#ping 10.0.0.33 source 10.0.0.11 rep 3   
+PING 10.0.0.33 (10.0.0.33) from 10.0.0.11 : 72(100) bytes of data.  
+80 bytes from 10.0.0.33: icmp_seq=1 ttl=63 time=11.2 ms  
+80 bytes from 10.0.0.33: icmp_seq=2 ttl=63 time=7.25 ms  
+80 bytes from 10.0.0.33: icmp_seq=3 ttl=63 time=7.83 ms  
  
---- 10.0.0.33 ping statistics --- 
-3 packets transmitted, 3 received, 0% packet loss, time 23ms 
-rtt min/avg/max/mdev = 7.259/8.771/11.221/1.748 ms, ipg/ewma 11.684/10.364 ms 
-Leaf1# 
+--- 10.0.0.33 ping statistics ---  
+3 packets transmitted, 3 received, 0% packet loss, time 23ms  
+rtt min/avg/max/mdev = 7.259/8.771/11.221/1.748 ms, ipg/ewma 11.684/10.364 ms  
+Leaf1#  
