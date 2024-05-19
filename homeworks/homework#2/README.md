@@ -60,7 +60,7 @@
 #### Опционально определяем аутентификацию между core интерфейсами для безопасности установления соединений.
 
 ### Итоговая конфигурация.
-    
+
    Spine1#show run | s ospf  
       interface Ethernet1  
       ip ospf network point-to-point  
@@ -83,6 +83,7 @@
       passive-interface Loopback0  
       max-lsa 1000 90 warning-only  
       maximum-paths 8  
+    
 
    
 +++++++++++++++++++++++++++++++++++++++++  
