@@ -47,11 +47,11 @@
 
 #### Определяем все core и loopback интерфейсы на коммутаторах в OSPF в area 0, 
 #### для участия в процессе работы протокола и анонсирования подсетей. 
-
+ 
  interface Ethernet1 
    
-   ip ospf area 0.0.0.0
-   
+   ip ospf area 0.0.0.0 
+ 
 #### Устанавливаем тип интерфейса p2p для core интерфейсов 
 #### для сокращения времени установления соседства между маршрутизаторами, без выбора DR/BDR.
 
@@ -63,70 +63,70 @@
 
 ### Итоговая конфигурация.
 
-Spine1#show run | s ospf 
-interface Ethernet1
-   ip ospf network point-to-point
-   ip ospf area 0.0.0.0
-interface Ethernet2
-   ip ospf network point-to-point
-   ip ospf area 0.0.0.0
-interface Ethernet3
-   ip ospf network point-to-point
-   ip ospf area 0.0.0.0
-interface Loopback0
-   ip ospf area 0.0.0.0
-router ospf 1
-   router-id 10.0.0.1
-   auto-cost reference-bandwidth 100000
-   passive-interface Loopback0
-   max-lsa 1000 90 warning-only
-   maximum-paths 8
-Spine1#
+Spine1#show run | s ospf  
+interface Ethernet1 
+   ip ospf network point-to-point 
+   ip ospf area 0.0.0.0 
+interface Ethernet2 
+   ip ospf network point-to-point 
+   ip ospf area 0.0.0.0 
+interface Ethernet3 
+   ip ospf network point-to-point 
+   ip ospf area 0.0.0.0 
+interface Loopback0 
+   ip ospf area 0.0.0.0 
+router ospf 1 
+   router-id 10.0.0.1 
+   auto-cost reference-bandwidth 100000 
+   passive-interface Loopback0 
+   max-lsa 1000 90 warning-only 
+   maximum-paths 8 
+Spine1# 
 
-+++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++ 
 
-Leaf1#show run | s ospf 
-interface Ethernet1
-   ip ospf network point-to-point
-   ip ospf area 0.0.0.0
-interface Ethernet2
-   ip ospf network point-to-point
-   ip ospf area 0.0.0.0
-interface Loopback0
-   ip ospf area 0.0.0.0
-router ospf 1
-   router-id 10.0.0.11
-   auto-cost reference-bandwidth 100000
-   passive-interface Loopback0
-   max-lsa 1000 90 warning-only
-   maximum-paths 4
+Leaf1#show run | s ospf  
+interface Ethernet1 
+   ip ospf network point-to-point 
+   ip ospf area 0.0.0.0 
+interface Ethernet2 
+   ip ospf network point-to-point 
+   ip ospf area 0.0.0.0 
+interface Loopback0 
+   ip ospf area 0.0.0.0 
+router ospf 1 
+   router-id 10.0.0.11 
+   auto-cost reference-bandwidth 100000 
+   passive-interface Loopback0 
+   max-lsa 1000 90 warning-only 
+   maximum-paths 4 
 
-#### Проверка таблицы маршрутизации и связности на всез коммутаторах.
+#### Проверка таблицы маршрутизации и связности на всез коммутаторах. 
 
-На примере показана проверке на одном коммутаторе.
+На примере показана проверке на одном коммутаторе. 
 
 Leaf1#show ip route ospf 
 
-VRF: default
+VRF: default 
+ 
+ O        10.0.0.1/32 [110/110] via 10.1.1.0, Ethernet1 
+ O        10.0.0.2/32 [110/110] via 10.1.2.0, Ethernet2 
+ O        10.0.0.22/32 [110/210] via 10.1.1.0, Ethernet1 
+                                 via 10.1.2.0, Ethernet2 
+ O        10.0.0.33/32 [110/210] via 10.1.1.0, Ethernet1 
+                                 via 10.1.2.0, Ethernet2 
+ O        10.1.1.2/31 [110/200] via 10.1.1.0, Ethernet1 
+ O        10.1.1.4/31 [110/200] via 10.1.1.0, Ethernet1 
+ O        10.1.2.2/31 [110/200] via 10.1.2.0, Ethernet2 
+ O        10.1.2.4/31 [110/200] via 10.1.2.0, Ethernet2 
 
- O        10.0.0.1/32 [110/110] via 10.1.1.0, Ethernet1
- O        10.0.0.2/32 [110/110] via 10.1.2.0, Ethernet2
- O        10.0.0.22/32 [110/210] via 10.1.1.0, Ethernet1
-                                 via 10.1.2.0, Ethernet2
- O        10.0.0.33/32 [110/210] via 10.1.1.0, Ethernet1
-                                 via 10.1.2.0, Ethernet2
- O        10.1.1.2/31 [110/200] via 10.1.1.0, Ethernet1
- O        10.1.1.4/31 [110/200] via 10.1.1.0, Ethernet1
- O        10.1.2.2/31 [110/200] via 10.1.2.0, Ethernet2
- O        10.1.2.4/31 [110/200] via 10.1.2.0, Ethernet2
-
-Leaf1#ping 10.0.0.33 source 10.0.0.11 rep 3 
-PING 10.0.0.33 (10.0.0.33) from 10.0.0.11 : 72(100) bytes of data.
-80 bytes from 10.0.0.33: icmp_seq=1 ttl=63 time=11.2 ms
-80 bytes from 10.0.0.33: icmp_seq=2 ttl=63 time=7.25 ms
-80 bytes from 10.0.0.33: icmp_seq=3 ttl=63 time=7.83 ms
-
---- 10.0.0.33 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 23ms
-rtt min/avg/max/mdev = 7.259/8.771/11.221/1.748 ms, ipg/ewma 11.684/10.364 ms
-Leaf1#
+Leaf1#ping 10.0.0.33 source 10.0.0.11 rep 3  
+PING 10.0.0.33 (10.0.0.33) from 10.0.0.11 : 72(100) bytes of data. 
+80 bytes from 10.0.0.33: icmp_seq=1 ttl=63 time=11.2 ms 
+80 bytes from 10.0.0.33: icmp_seq=2 ttl=63 time=7.25 ms 
+80 bytes from 10.0.0.33: icmp_seq=3 ttl=63 time=7.83 ms 
+ 
+--- 10.0.0.33 ping statistics --- 
+3 packets transmitted, 3 received, 0% packet loss, time 23ms 
+rtt min/avg/max/mdev = 7.259/8.771/11.221/1.748 ms, ipg/ewma 11.684/10.364 ms 
+Leaf1# 
