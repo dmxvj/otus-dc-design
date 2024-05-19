@@ -82,8 +82,8 @@ router ospf 1
 Spine1#  
    
 +++++++++++++++++++++++++++++++++++++++++  
-   
-Leaf1#show run | s ospf  
+
+ Leaf1#show run | s ospf  
 interface Ethernet1  
    ip ospf network point-to-point  
    ip ospf area 0.0.0.0  
@@ -102,9 +102,9 @@ router ospf 1
 #### Проверка таблицы маршрутизации и связности на всез коммутаторах. 
 
 На примере показана проверке на одном коммутаторе. 
-   
-Leaf1#show ip route ospf  
-   
+
+ Leaf1#show ip route ospf  
+ 
 VRF: default  
  
  O        10.0.0.1/32 [110/110] via 10.1.1.0, Ethernet1  
@@ -117,7 +117,8 @@ VRF: default
  O        10.1.1.4/31 [110/200] via 10.1.1.0, Ethernet1  
  O        10.1.2.2/31 [110/200] via 10.1.2.0, Ethernet2  
  O        10.1.2.4/31 [110/200] via 10.1.2.0, Ethernet2  
-   
+
+
 Leaf1#ping 10.0.0.33 source 10.0.0.11 rep 3   
 PING 10.0.0.33 (10.0.0.33) from 10.0.0.11 : 72(100) bytes of data.  
 80 bytes from 10.0.0.33: icmp_seq=1 ttl=63 time=11.2 ms  
