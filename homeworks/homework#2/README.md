@@ -111,7 +111,7 @@ router ospf 1
 
 На примере показана проверке на одном коммутаторе. 
 
-Leaf1#show ip ospf neighbor 
+Leaf1#show ip ospf neighbor  
 Neighbor ID     Instance VRF      Pri State                  Dead Time   Address         Interface  
 10.0.0.1        1        default  1   FULL                   00:00:36    10.1.1.0        Ethernet1  
 10.0.0.2        1        default  1   FULL                   00:00:31    10.1.2.0        Ethernet2  
