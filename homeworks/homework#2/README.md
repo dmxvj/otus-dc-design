@@ -60,29 +60,29 @@
 #### Опционально определяем аутентификацию между core интерфейсами для безопасности установления соединений.
 
 ### Итоговая конфигурация.
-   
+    
    Spine1#show run | s ospf  
-   interface Ethernet1  
-   ip ospf network point-to-point  
-   ip ospf area 0.0.0.0  
+      interface Ethernet1  
+      ip ospf network point-to-point  
+      ip ospf area 0.0.0.0  
 
    interface Ethernet2  
-   ip ospf network point-to-point  
-   ip ospf area 0.0.0.0  
+      ip ospf network point-to-point  
+      ip ospf area 0.0.0.0  
 
    interface Ethernet3  
-   ip ospf network point-to-point  
-   ip ospf area 0.0.0.0  
+      ip ospf network point-to-point  
+      ip ospf area 0.0.0.0  
 
    interface Loopback0  
-   ip ospf area 0.0.0.0  
+      ip ospf area 0.0.0.0  
 
    router ospf 1  
-   router-id 10.0.0.1  
-   auto-cost reference-bandwidth 100000  
-   passive-interface Loopback0  
-   max-lsa 1000 90 warning-only  
-   maximum-paths 8  
+      router-id 10.0.0.1  
+      auto-cost reference-bandwidth 100000  
+      passive-interface Loopback0  
+      max-lsa 1000 90 warning-only  
+      maximum-paths 8  
 
    
 +++++++++++++++++++++++++++++++++++++++++  
@@ -116,7 +116,7 @@ VRF: default
  
  O        10.0.0.1/32 [110/110] via 10.1.1.0, Ethernet1  
  O        10.0.0.2/32 [110/110] via 10.1.2.0, Ethernet2  
- O        10.0.0.22/32 [110/210] via 10.1.1.0, Ethernet1  
+ O        10.0.0.22/32 [110/210] via 10.1.1.0, Ethernet1 
                                  via 10.1.2.0, Ethernet2  
  O        10.0.0.33/32 [110/210] via 10.1.1.0, Ethernet1  
                                  via 10.1.2.0, Ethernet2  
