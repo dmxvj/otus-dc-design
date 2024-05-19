@@ -2,7 +2,7 @@
 
 ### Схема сети.
 
-![](homeworks/homework#1/layout1.png)
+![](homework#1/layout1.png)
 
 ### План адресации.
 
