@@ -35,7 +35,7 @@
 
     auto-cost reference-bandwidth 100000
 
-#### Интерфейс loopback0 будет пассивным без определения соседства.
+#### Интерфейс loopback0 будет пассивным без попыток определения соседства.
 
     passive-interface Loopback0
 
