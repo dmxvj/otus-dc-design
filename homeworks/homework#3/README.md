@@ -193,7 +193,7 @@
     netcom    default  Leaf2            L2   Ethernet2          P2P               UP    29          10                   
     netcom    default  Leaf3            L2   Ethernet3          P2P               UP    30          10                   
 
-#### Проверка таблицы маршрутизации, ECMP и IP связности на всех коммутаторах. 
+#### Проверка таблицы маршрутизации, ECMP и IP связности на примере 3-его Leaf коммутатора. 
 
     Leaf3#show ip route isis 
 
