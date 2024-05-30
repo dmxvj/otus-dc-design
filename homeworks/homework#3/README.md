@@ -30,8 +30,13 @@
 
     router isis netcom 
         net 49.ffdd.0010.0000.0000.0001.00 
-        router-id ipv4 10.0.0.1
+        router-id ipv4 10.0.0.1 
 
+#### Назначаем имя коммутатора в процессе протокола IS-IS для обмена именами узлов в домене IS-IS. 
+
+    router isis netcom 
+        is-hostname Spine1 
+  
 #### Определяем режим работы узла и его интерфейсов на 2ом уровене.  
 
     router isis netcom 
