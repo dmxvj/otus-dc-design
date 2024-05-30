@@ -37,7 +37,7 @@
     router isis netcom 
         is-type level-2 
 
-    interface Ethernet1-3
+    interface Ethernet1-3 
         isis circuit-type level-2 
     
 #### Определяем возможность ECMP на аплинках у Leaf и на даунлинках у Spine коммутаторов.
@@ -52,22 +52,25 @@
     interface Loopback0-1
         isis passive 
 
-
-
-#### Определяем все core и loopback интерфейсы на коммутаторах в OSPF в area 0, 
-#### для участия в процессе работы протокола и анонсирования подсетей. 
-
-    interface Ethernet1   
-        ip ospf area 0.0.0.0  
  
-#### Устанавливаем тип интерфейса p2p для core интерфейсов,  
-#### для сокращения времени установления соседства между маршрутизаторами, без выбора DR/BDR.
+#### Устанавливаем тип интерфейса p2p для core интерфейсов, 
+#### для сокращения времени установления соседства между маршрутизаторами, без выбора DIS.  
 
-        ip ospf network point-to-point
+    interface Ethernet1-3 
+        isis network point-to-point 
 
-#### Опционально запускаем между core интерфейсами протокол BFD для ускорения определения разрыва соединений. 
+#### Запускаем между core интерфейсами протокол BFD для ускорения определения разрыва соединений. 
 
-#### Опционально определяем аутентификацию между core интерфейсами для безопасности установления соседства.
+    interface Ethernet1-3 
+        isis bfd 
+        bfd interval 100 min-rx 100 multiplier 3 
+
+#### Определяем аутентификацию между core интерфейсами для безопасности установления соседства. 
+
+
+    interface Ethernet1-3 
+        isis authentication mode sha key-id 1 level-2 
+        isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2 
 
 ### Итоговая конфигурация.
 
