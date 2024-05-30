@@ -164,7 +164,7 @@
         address-family ipv4 unicast 
             maximum-paths 4 
 
-#### Проверка работы протокола BFD.
+#### Проверка работы протокола BFD. 
 
     Spine2#show bfd peers 
     VRF name: default 
@@ -194,39 +194,40 @@
          NA       No Diagnostic       Up 
          NA       No Diagnostic       Up 
  
-#### Проверка таблицы маршрутизации, ECMP, соседства узлов и IP связности на всех коммутаторах. 
+#### Проверка соседства IS-IS узлов в домене. 
+
+    Spine2#show isis neighbors  
+    
+    Instance  VRF      System Id        Type Interface          SNPA              State Hold time   Circuit Id           
+    netcom    default  Leaf1            L2   Ethernet1          P2P               UP    28          10                  
+    netcom    default  Leaf2            L2   Ethernet2          P2P               UP    29          10                   
+    netcom    default  Leaf3            L2   Ethernet3          P2P               UP    30          10                   
+
+#### Проверка таблицы маршрутизации, ECMP и IP связности на всех коммутаторах. 
 
 На примере показана проверке на одном коммутаторе. 
 
-Leaf1#show ip ospf neighbor  
-Neighbor ID     Instance VRF      Pri State                  Dead Time   Address         Interface  
-10.0.0.1        1        default  1   FULL                   00:00:36    10.1.1.0        Ethernet1  
-10.0.0.2        1        default  1   FULL                   00:00:31    10.1.2.0        Ethernet2  
-Leaf1#  
+    Leaf3#show ip route isis 
 
- Leaf1#show ip route ospf  
+    VRF: default
+    Codes: C - connected, S - static, K - kernel, 
+    ----------------------------------------------------------- 
+        I L2 - IS-IS level 2, O3 - OSPFv3, A B - BGP Aggregate, 
+    ----------------------------------------------------------- 
+    I L2     10.0.0.1/32 [115/20] via 10.1.1.4, Ethernet1 
+    I L2     10.0.0.2/32 [115/20] via 10.1.2.4, Ethernet2 
+    I L2     10.0.0.11/32 [115/30] via 10.1.1.4, Ethernet1 
+                                   via 10.1.2.4, Ethernet2 
+    I L2     10.0.0.22/32 [115/30] via 10.1.1.4, Ethernet1 
+                                   via 10.1.2.4, Ethernet2 
+    I L2     10.0.0.101/32 [115/20] via 10.1.1.4, Ethernet1 
+    I L2     10.0.0.102/32 [115/20] via 10.1.2.4, Ethernet2 
+    I L2     10.0.0.111/32 [115/30] via 10.1.1.4, Ethernet1 
+                                    via 10.1.2.4, Ethernet2 
+    I L2     10.0.0.122/32 [115/30] via 10.1.1.4, Ethernet1 
+                                    via 10.1.2.4, Ethernet2 
+    I L2     10.1.1.0/31 [115/20] via 10.1.1.4, Ethernet1 
+    I L2     10.1.1.2/31 [115/20] via 10.1.1.4, Ethernet1 
+    I L2     10.1.2.0/31 [115/20] via 10.1.2.4, Ethernet2 
+    I L2     10.1.2.2/31 [115/20] via 10.1.2.4, Ethernet2 
  
-VRF: default  
- 
- O        10.0.0.1/32 [110/110] via 10.1.1.0, Ethernet1  
- O        10.0.0.2/32 [110/110] via 10.1.2.0, Ethernet2  
- O        10.0.0.22/32 [110/210] via 10.1.1.0, Ethernet1  
-                                 via 10.1.2.0, Ethernet2  
- O        10.0.0.33/32 [110/210] via 10.1.1.0, Ethernet1  
-                                 via 10.1.2.0, Ethernet2  
- O        10.1.1.2/31 [110/200] via 10.1.1.0, Ethernet1  
- O        10.1.1.4/31 [110/200] via 10.1.1.0, Ethernet1  
- O        10.1.2.2/31 [110/200] via 10.1.2.0, Ethernet2  
- O        10.1.2.4/31 [110/200] via 10.1.2.0, Ethernet2  
-
-
-Leaf1#ping 10.0.0.33 source 10.0.0.11 rep 3   
-PING 10.0.0.33 (10.0.0.33) from 10.0.0.11 : 72(100) bytes of data.  
-80 bytes from 10.0.0.33: icmp_seq=1 ttl=63 time=11.2 ms  
-80 bytes from 10.0.0.33: icmp_seq=2 ttl=63 time=7.25 ms  
-80 bytes from 10.0.0.33: icmp_seq=3 ttl=63 time=7.83 ms  
-    
---- 10.0.0.33 ping statistics ---  
-3 packets transmitted, 3 received, 0% packet loss, time 23ms  
-rtt min/avg/max/mdev = 7.259/8.771/11.221/1.748 ms, ipg/ewma 11.684/10.364 ms  
-Leaf1#  
