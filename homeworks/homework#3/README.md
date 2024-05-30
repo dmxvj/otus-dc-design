@@ -76,7 +76,7 @@
 
 ### Итоговая конфигурация.
 
-    Spine1#sh run | s isis 
+    Spine1#show run | s isis 
 
     interface Ethernet1 
         isis enable netcom 
@@ -126,7 +126,7 @@
  
 +++++++++++++++++++++++++++++++++++++++++  
 
-    Leaf1#sh run | s isis 
+    Leaf1#show run | s isis 
     interface Ethernet1 
         isis enable netcom  
         isis bfd    
@@ -176,7 +176,7 @@
     10.1.2.5   161062417   787922893        Ethernet3(20)  normal   05/30/24 20:04 
  
     LastDown            LastDiag    State 
--------------- ------------------- ----- 
+    -------------- ------------------- ----- 
          NA       No Diagnostic       Up 
          NA       No Diagnostic       Up 
          NA       No Diagnostic       Up 
