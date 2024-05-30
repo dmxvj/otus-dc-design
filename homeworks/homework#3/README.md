@@ -74,50 +74,50 @@
 
     Spine1#sh run | s isis 
 
-interface Ethernet1 
-   isis enable netcom 
-   isis bfd 
-   isis circuit-type level-2 
-   isis network point-to-point 
-   isis authentication mode sha key-id 1 level-2 
-   isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2  
+    interface Ethernet1 
+        isis enable netcom 
+        isis bfd 
+        isis circuit-type level-2 
+        isis network point-to-point 
+        isis authentication mode sha key-id 1 level-2 
+        isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2  
 
-interface Ethernet2 
-   isis enable netcom 
-   isis bfd 
-   isis circuit-type level-2 
-   isis network point-to-point 
-   isis authentication mode sha key-id 1 level-2 
-   isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2 
+    interface Ethernet2 
+        isis enable netcom 
+        isis bfd 
+        isis circuit-type level-2 
+        isis network point-to-point 
+        isis authentication mode sha key-id 1 level-2 
+        isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2 
  
-interface Ethernet3 
-   isis enable netcom 
-   isis bfd 
-   isis circuit-type level-2 
-   isis network point-to-point 
-   isis authentication mode sha key-id 1 level-2 
-   isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2 
+    interface Ethernet3 
+        isis enable netcom 
+        isis bfd 
+        isis circuit-type level-2 
+        isis network point-to-point 
+        isis authentication mode sha key-id 1 level-2 
+        isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2 
     
-interface Loopback0 
-   isis enable netcom 
-   isis circuit-type level-2 
-   isis passive 
+    interface Loopback0 
+        isis enable netcom 
+        isis circuit-type level-2 
+        isis passive 
     
-interface Loopback1 
-   isis enable netcom 
-   isis circuit-type level-2 
-   isis passive 
+    interface Loopback1 
+        isis enable netcom 
+        isis circuit-type level-2 
+        isis passive 
     
-router isis netcom 
-   net 49.ffdd.0010.0000.0000.0001.00 
-   is-hostname Spine1 
-   router-id ipv4 10.0.0.1 
-   is-type level-2 
-   log-adjacency-changes 
-   set-overload-bit on-startup 180 
-   ! 
-   address-family ipv4 unicast 
-      maximum-paths 8 
+    router isis netcom 
+        net 49.ffdd.0010.0000.0000.0001.00 
+        is-hostname Spine1 
+        router-id ipv4 10.0.0.1 
+        is-type level-2 
+        log-adjacency-changes 
+        set-overload-bit on-startup 180 
+        ! 
+        address-family ipv4 unicast 
+            maximum-paths 8 
  
     
 
