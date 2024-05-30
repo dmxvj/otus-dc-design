@@ -32,6 +32,14 @@
         net 49.ffdd.0010.0000.0000.0001.00 
         router-id ipv4 10.0.0.1 
 
+#### Разрешаем процесс ISIS на Core и Loopback интерфейсах.
+ 
+    interface Ethernet 1-3 
+        isis enable netcom 
+ 
+    interface Loopback 0-1 
+        isis enable netcom 
+ 
 #### Назначаем имя коммутатора в процессе протокола IS-IS для возможности обмена именами узлов в домене IS-IS. 
  
     router isis netcom 
@@ -42,7 +50,7 @@
     router isis netcom 
         is-type level-2 
 
-    interface Ethernet1-3 
+    interface Ethernet 1-3 
         isis circuit-type level-2 
     
 #### Определяем возможность ECMP IPv4 на аплинках у Leaf и на даунлинках у Spine коммутаторов.
@@ -53,7 +61,7 @@
  
 #### Интерфейсы Loopback0 и Loopback1 будут пассивными без попыток определения соседства.
 
-    interface Loopback0-1
+    interface Loopback 0-1
         isis passive 
 
 #### Устанавливаем тип интерфейса p2p на core интерфейсах для сокращения времени установления соседства между маршрутизаторами без выбора DIS.  
