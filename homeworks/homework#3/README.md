@@ -51,12 +51,12 @@
         address-family ipv4 unicast 
             maximum-paths 8
  
-#### Интерфейс Loopback0 и Loopback1 будет пассивными без попыток определения соседства.
+#### Интерфейс Loopback0 и Loopback1 будут пассивными без попыток определения соседства.
 
     interface Loopback0-1
         isis passive 
 
-#### Устанавливаем тип интерфейса p2p на core интерфейсов,
+#### Устанавливаем тип интерфейса p2p на core интерфейсах,
 #### для сокращения времени установления соседства между маршрутизаторами, без выбора DIS.  
 
     interface Ethernet1-3 
@@ -68,9 +68,8 @@
         isis bfd 
         bfd interval 100 min-rx 100 multiplier 3 
 
-#### Определяем аутентификацию между core интерфейсами для безопасности установления соседства. 
-
-
+#### Определяем аутентификацию между core интерфейсами для усиления безопасности установления соседства. 
+ 
     interface Ethernet1-3 
         isis authentication mode sha key-id 1 level-2 
         isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2 
@@ -136,7 +135,7 @@
         isis authentication mode sha key-id 1 level-2   
         isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2   
 
-    interface Ethernet 
+    interface Ethernet2 
         isis enable netcom  
         isis bfd    
         isis circuit-type level-2   
@@ -165,7 +164,36 @@
         address-family ipv4 unicast 
             maximum-paths 4 
 
+#### Проверка работы протокола BFD.
 
+    Spine2#show bfd peers 
+    VRF name: default 
+    -----------------
+    DstAddr       MyDisc    YourDisc  Interface/Transport    Type           LastUp  
+    --------- ----------- ----------- -------------------- ------- ----------------
+    10.1.2.1  2255156730  3039257150        Ethernet1(18)  normal   05/30/24 20:04 
+    10.1.2.3  2537779188  4281995752        Ethernet2(19)  normal   05/30/24 20:04 
+    10.1.2.5   161062417   787922893        Ethernet3(20)  normal   05/30/24 20:04 
+ 
+    LastDown            LastDiag    State 
+-------------- ------------------- ----- 
+         NA       No Diagnostic       Up 
+         NA       No Diagnostic       Up 
+         NA       No Diagnostic       Up 
+
+    Leaf2#show bfd peers 
+    VRF name: default 
+    ----------------- 
+    DstAddr       MyDisc    YourDisc  Interface/Transport    Type           LastUp  
+    --------- ----------- ----------- -------------------- ------- ---------------- 
+    10.1.1.2  1906449144  2350041696        Ethernet1(15)  normal   05/30/24 20:04 
+    10.1.2.2  4281995752  2537779188        Ethernet2(16)  normal   05/30/24 20:04  
+ 
+    LastDown            LastDiag    State 
+    -------------- ------------------- ----- 
+         NA       No Diagnostic       Up 
+         NA       No Diagnostic       Up 
+ 
 #### Проверка таблицы маршрутизации, ECMP, соседства узлов и IP связности на всех коммутаторах. 
 
 На примере показана проверке на одном коммутаторе. 
