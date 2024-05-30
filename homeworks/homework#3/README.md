@@ -66,18 +66,18 @@
 
 #### Устанавливаем тип интерфейса p2p на core интерфейсах для сокращения времени установления соседства между маршрутизаторами без выбора DIS.  
 
-    interface Ethernet1-3 
+    interface Ethernet 1-3 
         isis network point-to-point 
 
 #### Запускаем между core интерфейсами протокол BFD для ускорения определения разрыва соединений. 
 
-    interface Ethernet1-3 
+    interface Ethernet 1-3 
         isis bfd 
         bfd interval 100 min-rx 100 multiplier 3 
 
 #### Определяем аутентификацию между core интерфейсами для усиления безопасности установления соседства. 
  
-    interface Ethernet1-3 
+    interface Ethernet 1-3 
         isis authentication mode sha key-id 1 level-2 
         isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2 
 
