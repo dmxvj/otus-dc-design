@@ -46,14 +46,12 @@
 
     maximum-paths 8
 
-
 #### Интерфейс loopback0 будет пассивным без попыток определения соседства.
 
     interface Loopback0-1
         isis passive 
 
- 
-#### Устанавливаем тип интерфейса p2p для core интерфейсов,
+#### Устанавливаем тип интерфейса p2p на core интерфейсов,
 #### для сокращения времени установления соседства между маршрутизаторами, без выбора DIS.  
 
     interface Ethernet1-3 
@@ -74,29 +72,53 @@
 
 ### Итоговая конфигурация.
 
-    Spine1#show run | s ospf  
-    
-    interface Ethernet1  
-      ip ospf network point-to-point  
-      ip ospf area 0.0.0.0  
-    
-    interface Ethernet2  
-      ip ospf network point-to-point  
-      ip ospf area 0.0.0.0  
-   
-    interface Ethernet3
-      ospf network point-to-point  
-      ip ospf area 0.0.0.0  
+    Spine1#sh run | s isis 
 
-    interface Loopback0  
-      ip ospf area 0.0.0.0  
+interface Ethernet1 
+   isis enable netcom 
+   isis bfd 
+   isis circuit-type level-2 
+   isis network point-to-point 
+   isis authentication mode sha key-id 1 level-2 
+   isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2  
 
-    router ospf 1  
-      router-id 10.0.0.1  
-      auto-cost reference-bandwidth 100000  
-      passive-interface Loopback0  
-      max-lsa 1000 90 warning-only  
-      maximum-paths 8  
+interface Ethernet2 
+   isis enable netcom 
+   isis bfd 
+   isis circuit-type level-2 
+   isis network point-to-point 
+   isis authentication mode sha key-id 1 level-2 
+   isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2 
+ 
+interface Ethernet3 
+   isis enable netcom 
+   isis bfd 
+   isis circuit-type level-2 
+   isis network point-to-point 
+   isis authentication mode sha key-id 1 level-2 
+   isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2 
+    
+interface Loopback0 
+   isis enable netcom 
+   isis circuit-type level-2 
+   isis passive 
+    
+interface Loopback1 
+   isis enable netcom 
+   isis circuit-type level-2 
+   isis passive 
+    
+router isis netcom 
+   net 49.ffdd.0010.0000.0000.0001.00 
+   is-hostname Spine1 
+   router-id ipv4 10.0.0.1 
+   is-type level-2 
+   log-adjacency-changes 
+   set-overload-bit on-startup 180 
+   ! 
+   address-family ipv4 unicast 
+      maximum-paths 8 
+ 
     
 
    
