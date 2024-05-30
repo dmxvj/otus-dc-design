@@ -6,7 +6,7 @@
 
 ### План адресации.
 
-#### IP loopbacks & ISO NET адреса c номером area 65501.  
+#### IP loopbacks & ISO NET адреса c номером area 65501. 
 
 | Hostname | Loopback0    | Loopback1     |              NET               |
 | :------: | :-----------:|:-------------:|:-------------------------------:
@@ -22,21 +22,21 @@
 | :------: | :----------:|:-----------:|:-----------:|
 |  Spine1  | 10.1.1.0/31 | 10.1.1.2/31 | 10.1.1.4/31 |
 |  Spine2  | 10.1.2.0/31 | 10.1.2.2/31 | 10.1.2.4/31 |
-  
+
   
 ### План развёртывания протокола IS-IS для Underlay в домене, на всех коммутаторах.
-
+ 
 #### Запускаем именованный процесс ISIS с определением ISO и IP идентификатора узла в домене.
-
+ 
     router isis netcom 
         net 49.ffdd.0010.0000.0000.0001.00 
         router-id ipv4 10.0.0.1 
 
 #### Назначаем имя коммутатора в процессе протокола IS-IS для обмена именами узлов в домене IS-IS. 
-
+ 
     router isis netcom 
         is-hostname Spine1 
-  
+ 
 #### Определяем режим работы узла и его интерфейсов на 2ом уровене.  
 
     router isis netcom 
@@ -45,12 +45,12 @@
     interface Ethernet1-3 
         isis circuit-type level-2 
     
-#### Определяем возможность ECMP на аплинках у Leaf и на даунлинках у Spine коммутаторов.
+#### Определяем возможность ECMP IPv4 на аплинках у Leaf и на даунлинках у Spine коммутаторов.
 
-    maximum-paths 4
-
-    maximum-paths 8
-
+    router isis netcom 
+        address-family ipv4 unicast 
+            maximum-paths 8
+ 
 #### Интерфейс loopback0 будет пассивным без попыток определения соседства.
 
     interface Loopback0-1
@@ -124,31 +124,48 @@
         address-family ipv4 unicast 
             maximum-paths 8 
  
-    
-
-   
+ 
 +++++++++++++++++++++++++++++++++++++++++  
 
-    Leaf1#show run | s ospf  
+    Leaf1#sh run | s isis 
+    interface Ethernet1 
+        isis enable netcom  
+        isis bfd    
+        isis circuit-type level-2   
+        isis network point-to-point 
+        isis authentication mode sha key-id 1 level-2   
+        isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2   
 
-     interface Ethernet1  
-     ip ospf network point-to-point  
-     ip ospf area 0.0.0.0  
+    interface Ethernet 
+        isis enable netcom  
+        isis bfd    
+        isis circuit-type level-2   
+        isis network point-to-point 
+        isis authentication mode sha key-id 1 level-2   
+        isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2   
 
-    interface Ethernet2  
-     ip ospf network point-to-point  
-     ip ospf area 0.0.0.0  
+    interface Loopback0 
+        isis enable netcom  
+        isis circuit-type level-2   
+        isis passive    
 
-    interface Loopback0  
-     ip ospf area 0.0.0.0  
+    interface Loopback1 
+        isis enable netcom  
+        isis circuit-type level-2   
+        isis passive    
 
-    router ospf 1  
-     router-id 10.0.0.11  
-     auto-cost reference-bandwidth 100000  
-     passive-interface Loopback0  
-     max-lsa 1000 90 warning-only  
-     maximum-paths 4  
-   
+    router isis netcom  
+        net 49.ffdd.0010.0000.0000.0011.00  
+        is-hostname Leaf1   
+        router-id ipv4 10.0.0.11    
+        is-type level-2 
+        log-adjacency-changes   
+        set-overload-bit on-startup 180 
+        !   
+        address-family ipv4 unicast 
+            maximum-paths 4 
+
+
 #### Проверка таблицы маршрутизации, ECMP, соседства узлов и IP связности на всех коммутаторах. 
 
 На примере показана проверке на одном коммутаторе. 
