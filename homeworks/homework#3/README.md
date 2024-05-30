@@ -51,7 +51,7 @@
         address-family ipv4 unicast 
             maximum-paths 8
  
-#### Интерфейс Loopback0 и Loopback1 будут пассивными без попыток определения соседства.
+#### Интерфейсы Loopback0 и Loopback1 будут пассивными без попыток определения соседства.
 
     interface Loopback0-1
         isis passive 
