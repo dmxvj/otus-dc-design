@@ -183,19 +183,6 @@
          NA       No Diagnostic       Up 
          NA       No Diagnostic       Up 
          NA       No Diagnostic       Up 
-
-    Leaf2#show bfd peers 
-    VRF name: default 
-    ----------------- 
-    DstAddr       MyDisc    YourDisc  Interface/Transport    Type           LastUp  
-    --------- ----------- ----------- -------------------- ------- ---------------- 
-    10.1.1.2  1906449144  2350041696        Ethernet1(15)  normal   05/30/24 20:04 
-    10.1.2.2  4281995752  2537779188        Ethernet2(16)  normal   05/30/24 20:04  
- 
-    LastDown            LastDiag    State 
-    -------------- ------------------- ----- 
-         NA       No Diagnostic       Up 
-         NA       No Diagnostic       Up 
  
 #### Проверка соседства IS-IS узлов в домене. 
 
