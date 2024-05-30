@@ -24,7 +24,7 @@
 |  Spine2  | 10.1.2.0/31 | 10.1.2.2/31 | 10.1.2.4/31 |
 
   
-### План развёртывания протокола IS-IS для Underlay в домене, на всех коммутаторах.
+### План развёртывания протокола IS-IS для Underlay в домене на всех коммутаторах.
  
 #### Запускаем именованный процесс ISIS с определением ISO и IP идентификатора узла в домене.
  
@@ -74,7 +74,7 @@
         isis authentication mode sha key-id 1 level-2 
         isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2 
 
-### Итоговая конфигурация.
+### Итоговая конфигурация. 
 
     Spine1#show run | s isis 
 
@@ -164,7 +164,11 @@
         address-family ipv4 unicast 
             maximum-paths 4 
 
+###  Проверочная часть. 
+
 #### Проверка работы протокола BFD. 
+
+На примере показан пример проверки на одном коммутаторе. 
 
     Spine2#show bfd peers 
     VRF name: default 
@@ -205,8 +209,6 @@
 
 #### Проверка таблицы маршрутизации, ECMP и IP связности на всех коммутаторах. 
 
-На примере показана проверке на одном коммутаторе. 
-
     Leaf3#show ip route isis 
 
     VRF: default
@@ -230,4 +232,17 @@
     I L2     10.1.1.2/31 [115/20] via 10.1.1.4, Ethernet1 
     I L2     10.1.2.0/31 [115/20] via 10.1.2.4, Ethernet2 
     I L2     10.1.2.2/31 [115/20] via 10.1.2.4, Ethernet2 
+
+    Leaf3#ping 10.0.0.11 source 10.0.0.33
+    PING 10.0.0.11 (10.0.0.11) from 10.0.0.33 : 72(100) bytes of data.
+    80 bytes from 10.0.0.11: icmp_seq=1 ttl=63 time=9.81 ms
+    80 bytes from 10.0.0.11: icmp_seq=2 ttl=63 time=6.23 ms
+    80 bytes from 10.0.0.11: icmp_seq=3 ttl=63 time=6.24 ms
+    80 bytes from 10.0.0.11: icmp_seq=4 ttl=63 time=6.33 ms
+    80 bytes from 10.0.0.11: icmp_seq=5 ttl=63 time=7.70 ms
+
+    --- 10.0.0.11 ping statistics ---
+    5 packets transmitted, 5 received, 0% packet loss, time 37ms
+    rtt min/avg/max/mdev = 6.231/7.264/9.810/1.390 ms, ipg/ewma 9.489/8.525 ms
+    Leaf3# 
  
