@@ -6,7 +6,7 @@
 
 ### План адресации.
 
-#### IP loopbacks & ISO NET адреса c номером area 65501. 
+#### IP Loopbacks & ISO NET адреса c номером area 65501. 
 
 | Hostname | Loopback0    | Loopback1     |              NET               |
 | :------: | :-----------:|:-------------:|:-------------------------------:
