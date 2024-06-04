@@ -116,6 +116,8 @@
 
     Spine1#show run | s bgp
 
+    service routing protocols model multi-agent
+
     router bgp 65000
         router-id 10.0.0.1
         no bgp default ipv4-unicast
@@ -144,7 +146,10 @@
 +++++++++++++++++++++++++++++++++++++++++  
 
     Leaf1#show run | s bgp
-        ip prefix-list connected-to-bgp
+
+    service routing protocols model multi-agent
+
+    ip prefix-list connected-to-bgp
         seq 10 permit 10.0.0.0/24 ge 32
 
     route-map REDIS_CONN permit 10
@@ -169,7 +174,7 @@
         address-family ipv4
             neighbor spines activate
             redistribute connected route-map REDIS_CONN
-            
+
 ###  Проверочная часть. 
 
 #### Проверка работы протокола BFD. 
