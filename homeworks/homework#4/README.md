@@ -6,7 +6,7 @@
 
 ### План адресации.
 
-#### IP Loopbacks адреса и номера AS. 
+#### IP Loopback адреса и номера AS. 
 
 | Hostname |   Loopback0  |   Loopback1   | ASN   |
 | :------: | :-----------:|:-------------:|:------:
@@ -37,46 +37,80 @@
         router-id 10.0.0.1 
 
  
-#### Назначаем имя коммутатора в процессе протокола IS-IS для возможности обмена именами узлов в домене IS-IS. 
+#### Ставим таймеры Keepalive и Hold на минимальные значения 1 и 3 сек. 
  
-    router isis netcom 
-        is-hostname Spine1 
+    router bgp 65000
+        timers bgp 1 3 
  
-#### Определяем режим работы узла и его интерфейсов на 2-ом уровене. 
+#### Устанавливаем административную дистанцию для маршрутов eBGP 20, а для iBGP маршрутов и локальных подсетей 200. 
 
-    router isis netcom 
-        is-type level-2 
+    router bgp 65000 
+        distance bgp 20 200 200 
 
-    interface Ethernet 1-3 
-        isis circuit-type level-2 
     
-#### Определяем возможность ECMP IPv4 на аплинках у Leaf и на даунлинках у Spine коммутаторов.
+#### Определяем возможность ECMP для IPv4 префиксов на аплинках у Leaf и на даунлинках у Spine коммутаторов.
 
-    router isis netcom 
-        address-family ipv4 unicast 
-            maximum-paths 8
+    router bgp 65000 
+        maximum-paths 8 ecmp 64
  
-#### Интерфейсы Loopback0 и Loopback1 будут пассивными без попыток определения соседства.
+#### Подключаем соседей.
 
-    interface Loopback 0-1
-        isis passive 
+    router bgp 65000
+        neighbor 10.1.1.1 remote-as 65001
+        neighbor 10.1.1.3 remote-as 65002
+        neighbor 10.1.1.5 remote-as 65003 
 
-#### Устанавливаем тип интерфейса p2p на Core интерфейсах для сокращения времени установления соседства между маршрутизаторами без выбора DIS.  
+#### Таймер MRAI протокола eBGP для немедленного анонса изменений в сторону соседей устанавливаем на 0.  
 
-    interface Ethernet 1-3 
-        isis network point-to-point 
+    router bgp 65000 
+        neighbor 10.1.1.1 out-delay 0
+        neighbor 10.1.1.3 out-delay 0
+        neighbor 10.1.1.5 out-delay 0 
 
-#### Запускаем между core интерфейсами протокол BFD для ускорения определения разрыва соединений. 
+#### Активируем протокол BFD для соседей и на Core интерфейсах. 
 
-    interface Ethernet 1-3 
-        isis bfd 
+    router bgp 65000 
+        neighbor 10.1.1.1 bfd 
+        neighbor 10.1.1.3 bfd
+        neighbor 10.1.1.5 bfd
+
+    interface Ethernet1-3
         bfd interval 100 min-rx 100 multiplier 3 
 
-#### Определяем аутентификацию между Core интерфейсами для усиления безопасности установления соседства. 
+#### Определяем аутентификацию для соседей. 
  
-    interface Ethernet 1-3 
-        isis authentication mode sha key-id 1 level-2 
-        isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2 
+    router bgp 65000 
+        neighbor 10.1.1.1 password 7 B7rhB/vPbn0K7ECNtz1K5w==
+        neighbor 10.1.1.3 password 7 6ZlbNVefGOoRTw2KYF4N2A==
+        neighbor 10.1.1.5 password 7 zWKcHc58qGjgbjmUvjsL3A==
+
+#### Активируем соседей для маршрутизации IPv4 префиксов.
+
+    router bgp 65000 
+        address-family ipv4
+            neighbor 10.1.1.1 activate
+            neighbor 10.1.1.3 activate
+            neighbor 10.1.1.5 activate
+
+#### Делаем редистрибуцию локальных подсетей Loopback интерфейсов.
+
+    router bgp 65000
+        address-family ipv4
+            network 10.0.0.1/32
+
+Или через route-map 
+
+    ip prefix-list connected-to-bgp
+    seq 10 permit 10.0.0.0/24 ge 32
+    !
+    route-map REDIS_CONN permit 10
+    match ip address prefix-list connected-to-bgp
+    set origin igp
+    !
+
+    router bgp 65000
+        address-family ipv4
+            redistribute connected route-map REDIS_CONN
 
 ### Итоговая конфигурация. 
 
