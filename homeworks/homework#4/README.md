@@ -181,66 +181,32 @@
 
 На примере показан пример проверки на одном коммутаторе. 
 
-    Spine2#show bfd peers 
-    VRF name: default 
+    Spine2#show bfd peers
+    VRF name: default
     -----------------
-    DstAddr       MyDisc    YourDisc  Interface/Transport    Type           LastUp  
+    DstAddr       MyDisc    YourDisc  Interface/Transport    Type           LastUp 
     --------- ----------- ----------- -------------------- ------- ----------------
-    10.1.2.1  2255156730  3039257150        Ethernet1(18)  normal   05/30/24 20:04 
-    10.1.2.3  2537779188  4281995752        Ethernet2(19)  normal   05/30/24 20:04 
-    10.1.2.5   161062417   787922893        Ethernet3(20)  normal   05/30/24 20:04 
- 
-    LastDown            LastDiag    State 
-    -------------- ------------------- ----- 
-         NA       No Diagnostic       Up 
-         NA       No Diagnostic       Up 
-         NA       No Diagnostic       Up 
- 
-#### Проверка соседства IS-IS узлов в домене. 
+    10.1.2.1  1478589633  2354517210        Ethernet1(18)  normal   05/31/24 20:52 
+    10.1.2.3  1154948017  2355561545        Ethernet2(19)  normal   05/31/24 20:54 
+    10.1.2.5   320984180  2824604348        Ethernet3(20)  normal   05/31/24 20:56 
 
-    Spine2#show isis neighbors  
-    
-    Instance  VRF      System Id        Type Interface          SNPA              State Hold time   Circuit Id           
-    netcom    default  Leaf1            L2   Ethernet1          P2P               UP    28          10                  
-    netcom    default  Leaf2            L2   Ethernet2          P2P               UP    29          10                   
-    netcom    default  Leaf3            L2   Ethernet3          P2P               UP    30          10                   
+         LastDown            LastDiag    State
+    -------------------- ------------------- -----
+        05/31/24 20:50       No Diagnostic       Up
+               NA       No Diagnostic       Up
+               NA       No Diagnostic       Up
+ 
+#### Проверка установления соседства BGP пиров. 
+
+    Spine2#show ip bgp summary 
+    BGP summary information for VRF default
+    Router identifier 10.0.0.2, local AS number 65000
+    Neighbor Status Codes: m - Under maintenance
+        Neighbor V AS           MsgRcvd   MsgSent  InQ OutQ  Up/Down State   PfxRcd PfxAcc
+        10.1.2.1 4 65001         449319    449209    0    0    4d02h Estab   2      2
+        10.1.2.3 4 65002         420143    420041    0    0    4d03h Estab   2      2
+        10.1.2.5 4 65003         419768    419772    0    0    4d03h Estab   2      2
 
 #### Проверка таблицы маршрутизации, ECMP и IP связности на примере 3-его Leaf коммутатора. 
 
-    Leaf3#show ip route isis 
-
-    VRF: default
-    Codes: C - connected, S - static, K - kernel, 
-    ----------------------------------------------------------- 
-        I L2 - IS-IS level 2, O3 - OSPFv3, A B - BGP Aggregate, 
-    ----------------------------------------------------------- 
-    I L2     10.0.0.1/32 [115/20] via 10.1.1.4, Ethernet1 
-    I L2     10.0.0.2/32 [115/20] via 10.1.2.4, Ethernet2 
-    I L2     10.0.0.11/32 [115/30] via 10.1.1.4, Ethernet1 
-                                   via 10.1.2.4, Ethernet2 
-    I L2     10.0.0.22/32 [115/30] via 10.1.1.4, Ethernet1 
-                                   via 10.1.2.4, Ethernet2 
-    I L2     10.0.0.101/32 [115/20] via 10.1.1.4, Ethernet1 
-    I L2     10.0.0.102/32 [115/20] via 10.1.2.4, Ethernet2 
-    I L2     10.0.0.111/32 [115/30] via 10.1.1.4, Ethernet1 
-                                    via 10.1.2.4, Ethernet2 
-    I L2     10.0.0.122/32 [115/30] via 10.1.1.4, Ethernet1 
-                                    via 10.1.2.4, Ethernet2 
-    I L2     10.1.1.0/31 [115/20] via 10.1.1.4, Ethernet1 
-    I L2     10.1.1.2/31 [115/20] via 10.1.1.4, Ethernet1 
-    I L2     10.1.2.0/31 [115/20] via 10.1.2.4, Ethernet2 
-    I L2     10.1.2.2/31 [115/20] via 10.1.2.4, Ethernet2 
-
-    Leaf3#ping 10.0.0.11 source 10.0.0.33
-    PING 10.0.0.11 (10.0.0.11) from 10.0.0.33 : 72(100) bytes of data.
-    80 bytes from 10.0.0.11: icmp_seq=1 ttl=63 time=9.81 ms
-    80 bytes from 10.0.0.11: icmp_seq=2 ttl=63 time=6.23 ms
-    80 bytes from 10.0.0.11: icmp_seq=3 ttl=63 time=6.24 ms
-    80 bytes from 10.0.0.11: icmp_seq=4 ttl=63 time=6.33 ms
-    80 bytes from 10.0.0.11: icmp_seq=5 ttl=63 time=7.70 ms
-
-    --- 10.0.0.11 ping statistics ---
-    5 packets transmitted, 5 received, 0% packet loss, time 37ms
-    rtt min/avg/max/mdev = 6.231/7.264/9.810/1.390 ms, ipg/ewma 9.489/8.525 ms
-    Leaf3# 
- 
+    
