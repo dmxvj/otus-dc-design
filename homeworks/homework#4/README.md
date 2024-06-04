@@ -209,4 +209,38 @@
 
 #### Проверка таблицы маршрутизации, ECMP и IP связности на примере 3-его Leaf коммутатора. 
 
-    
+    Leaf3#show ip route 
+
+    VRF: default
+    Codes: C - connected, S - static, K - kernel, 
+       
+       B I - iBGP, B E - eBGP, R - RIP, I L1 - IS-IS level 1,
+       
+    Gateway of last resort is not set
+
+    B E      10.0.0.1/32 [20/0] via 10.1.1.4, Ethernet1
+    B E      10.0.0.2/32 [20/0] via 10.1.2.4, Ethernet2
+    B E      10.0.0.11/32 [20/0] via 10.1.1.4, Ethernet1
+                                 via 10.1.2.4, Ethernet2
+    B E      10.0.0.22/32 [20/0] via 10.1.1.4, Ethernet1
+                                 via 10.1.2.4, Ethernet2
+    C        10.0.0.33/32 is directly connected, Loopback0
+    B E      10.0.0.111/32 [20/0] via 10.1.1.4, Ethernet1
+                                  via 10.1.2.4, Ethernet2
+    B E      10.0.0.122/32 [20/0] via 10.1.1.4, Ethernet1
+                                  via 10.1.2.4, Ethernet2
+    C        10.0.0.133/32 is directly connected, Loopback1
+    C        10.1.1.4/31 is directly connected, Ethernet1
+    C        10.1.2.4/31 is directly connected, Ethernet2
+
+
+    Leaf3#ping 10.0.0.11 source 10.0.0.33 size 9000 df-bit repeat 4
+    PING 10.0.0.11 (10.0.0.11) from 10.0.0.33 : 8972(9000) bytes of data.
+    8980 bytes from 10.0.0.11: icmp_seq=1 ttl=63 time=8.46 ms
+    8980 bytes from 10.0.0.11: icmp_seq=2 ttl=63 time=9.29 ms
+    8980 bytes from 10.0.0.11: icmp_seq=3 ttl=63 time=9.81 ms
+    8980 bytes from 10.0.0.11: icmp_seq=4 ttl=63 time=9.16 ms
+
+    --- 10.0.0.11 ping statistics ---
+    4 packets transmitted, 4 received, 0% packet loss, time 30ms
+    rtt min/avg/max/mdev = 8.466/9.185/9.817/0.486 ms, ipg/ewma 10.150/8.780 ms
