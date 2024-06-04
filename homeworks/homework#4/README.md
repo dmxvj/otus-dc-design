@@ -31,7 +31,7 @@
     service routing protocols model multi-agent 
 
 
-#### Запускаем процесс eBGP и назначаем Id коммутатора.
+#### Запускаем процесс eBGP и назначаем Id коммутатору.
  
     router bgp 65000 
         router-id 10.0.0.1 
@@ -114,94 +114,62 @@
 
 ### Итоговая конфигурация. 
 
-    Spine1#show run | s isis 
+    Spine1#show run | s bgp
 
-    interface Ethernet1 
-        isis enable netcom 
-        isis bfd 
-        isis circuit-type level-2 
-        isis network point-to-point 
-        isis authentication mode sha key-id 1 level-2 
-        isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2  
+    router bgp 65000
+        router-id 10.0.0.1
+        no bgp default ipv4-unicast
+        timers bgp 1 3
+        distance bgp 20 200 200
+        maximum-paths 8 ecmp 64
+        neighbor 10.1.1.1 remote-as 65001
+        neighbor 10.1.1.1 out-delay 0
+        neighbor 10.1.1.1 bfd
+        neighbor 10.1.1.1 password 7 B7rhB/vPbn0K7ECNtz1K5w==
+        neighbor 10.1.1.3 remote-as 65002
+        neighbor 10.1.1.3 out-delay 0
+        neighbor 10.1.1.3 bfd
+        neighbor 10.1.1.3 password 7 6ZlbNVefGOoRTw2KYF4N2A==
+        neighbor 10.1.1.5 remote-as 65003
+        neighbor 10.1.1.5 out-delay 0
+        neighbor 10.1.1.5 bfd
+        neighbor 10.1.1.5 password 7 zWKcHc58qGjgbjmUvjsL3A==
+        !
+        address-family ipv4
+            neighbor 10.1.1.1 activate
+            neighbor 10.1.1.3 activate
+            neighbor 10.1.1.5 activate
+            network 10.0.0.1/32
 
-    interface Ethernet2 
-        isis enable netcom 
-        isis bfd 
-        isis circuit-type level-2 
-        isis network point-to-point 
-        isis authentication mode sha key-id 1 level-2 
-        isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2 
- 
-    interface Ethernet3 
-        isis enable netcom 
-        isis bfd 
-        isis circuit-type level-2 
-        isis network point-to-point 
-        isis authentication mode sha key-id 1 level-2 
-        isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2 
-    
-    interface Loopback0 
-        isis enable netcom 
-        isis circuit-type level-2 
-        isis passive 
-    
-    interface Loopback1 
-        isis enable netcom 
-        isis circuit-type level-2 
-        isis passive 
-    
-    router isis netcom 
-        net 49.ffdd.0010.0000.0000.0001.00 
-        is-hostname Spine1 
-        router-id ipv4 10.0.0.1 
-        is-type level-2 
-        log-adjacency-changes 
-        set-overload-bit on-startup 180 
-        ! 
-        address-family ipv4 unicast 
-            maximum-paths 8 
- 
- 
 +++++++++++++++++++++++++++++++++++++++++  
 
-    Leaf1#show run | s isis 
-    interface Ethernet1 
-        isis enable netcom  
-        isis bfd    
-        isis circuit-type level-2   
-        isis network point-to-point 
-        isis authentication mode sha key-id 1 level-2   
-        isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2   
+    Leaf1#show run | s bgp
+        ip prefix-list connected-to-bgp
+        seq 10 permit 10.0.0.0/24 ge 32
 
-    interface Ethernet2 
-        isis enable netcom  
-        isis bfd    
-        isis circuit-type level-2   
-        isis network point-to-point 
-        isis authentication mode sha key-id 1 level-2   
-        isis authentication key-id 1 algorithm sha-256 key 7 6iHxbIFmD0V3DZlY2vhNdQ== level-2   
+    route-map REDIS_CONN permit 10
+        match ip address prefix-list connected-to-bgp
 
-    interface Loopback0 
-        isis enable netcom  
-        isis circuit-type level-2   
-        isis passive    
-
-    interface Loopback1 
-        isis enable netcom  
-        isis circuit-type level-2   
-        isis passive    
-
-    router isis netcom  
-        net 49.ffdd.0010.0000.0000.0011.00  
-        is-hostname Leaf1   
-        router-id ipv4 10.0.0.11    
-        is-type level-2 
-        log-adjacency-changes   
-        set-overload-bit on-startup 180 
-        !   
-        address-family ipv4 unicast 
-            maximum-paths 4 
-
+    router bgp 65001
+        router-id 10.0.0.11
+        no bgp default ipv4-unicast
+        timers bgp 1 3
+        distance bgp 20 200 200
+        maximum-paths 4 ecmp 64
+        neighbor spines peer group
+        neighbor spines remote-as 65000
+        neighbor spines out-delay 0
+        neighbor spines bfd
+        neighbor spines maximum-routes 10000 warning-only
+        neighbor 10.1.1.0 peer group spines
+        neighbor 10.1.1.0 password 7 B7rhB/vPbn0K7ECNtz1K5w==
+        neighbor 10.1.2.0 peer group spines
+        neighbor 10.1.2.0 password 7 qJkVzQI8BJZIFaQJU7/LYQ==
+        !
+        address-family ipv4
+            neighbor spines activate
+            redistribute connected route-map REDIS_CONN
+            
 ###  Проверочная часть. 
 
 #### Проверка работы протокола BFD. 
