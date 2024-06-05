@@ -98,7 +98,7 @@
         address-family ipv4
             network 10.0.0.1/32
 
-Или через route-map 
+Или через route-map на Leaf коммутаторах.
 
     ip prefix-list connected-to-bgp
     seq 10 permit 10.0.0.0/24 ge 32
