@@ -213,7 +213,7 @@
 
     VRF: default
     Codes: C - connected, S - static, K - kernel, 
-        B I - iBGP, B E - eBGP, R - RIP, I L1 - IS-IS level 1,
+           B I - iBGP, B E - eBGP, R - RIP, I L1 - IS-IS level 1,
        
     Gateway of last resort is not set
 
