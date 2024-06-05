@@ -193,8 +193,8 @@
          LastDown            LastDiag    State
     -------------------- ------------------- -----
         05/31/24 20:50       No Diagnostic       Up
-               NA           No Diagnostic       Up
-               NA           No Diagnostic       Up
+               NA            No Diagnostic       Up
+               NA            No Diagnostic       Up
  
 #### Проверка установления соседства BGP пиров. 
 
