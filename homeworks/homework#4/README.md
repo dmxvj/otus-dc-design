@@ -84,7 +84,7 @@
         neighbor 10.1.1.3 password 7 6ZlbNVefGOoRTw2KYF4N2A==
         neighbor 10.1.1.5 password 7 zWKcHc58qGjgbjmUvjsL3A==
 
-#### Активируем соседей для маршрутизации IPv4 префиксов.
+#### Активируем соседей для начала маршрутизации IPv4 префиксов.
 
     router bgp 65000 
         address-family ipv4
