@@ -110,25 +110,14 @@
     MAC         : 00:50:79:66:68:08
     MTU         : 1500
 
-### 7. 
+### 7. Настраиваем Network Virtual Ethernet устройство на крайних Leaf коммутаторах.
 
-    router bgp 65000
-        address-family ipv4
-            network 10.0.0.1/32
+#### 7.1 Создаём туннелированный интерфейс Vxlan, в котором используем интерфейс Loopback1 в качестве source.
 
-Или через route-map на Leaf коммутаторах.
-
-    ip prefix-list connected-to-bgp
-    seq 10 permit 10.0.0.0/24 ge 32
-    !
-    route-map REDIS_CONN permit 10
-    match ip address prefix-list connected-to-bgp
-    set origin igp
-    !
-
-    router bgp 65000
-        address-family ipv4
-            redistribute connected route-map REDIS_CONN
+    interface Vxlan1
+        vxlan source-interface Loopback1
+        vxlan udp-port 4789
+    
 
 ### Итоговая конфигурация. 
 
