@@ -83,22 +83,32 @@
             neighbor evpn-spines activate
 
 
-#### 4.2  
+### 5. Подключаем хосты PC1 и PC3 к соотвествующим Leaf1 и Leaf3 коммутаторам.  
  
-    router bgp 65000 
-        neighbor 10.1.1.1 password 7 B7rhB/vPbn0K7ECNtz1K5w==
-        neighbor 10.1.1.3 password 7 6ZlbNVefGOoRTw2KYF4N2A==
-        neighbor 10.1.1.5 password 7 zWKcHc58qGjgbjmUvjsL3A==
+    Leaf1#show run interfaces Ethernet 3
+    interface Ethernet3
+        switchport access vlan 101
 
-#### Активируем соседей для начала маршрутизации IPv4 префиксов.
+    Leaf3#show run interfaces Ethernet 3
+    interface Ethernet3
+        switchport access vlan 101
 
-    router bgp 65000 
-        address-family ipv4
-            neighbor 10.1.1.1 activate
-            neighbor 10.1.1.3 activate
-            neighbor 10.1.1.5 activate
 
-#### Делаем редистрибуцию локальных подсетей Loopback интерфейсов.
+### 6. Назначаем IP адреса хостам.
+
+    VPCS> show ip 
+    NAME        : PC1
+    IP/MASK     : 192.168.1.1/24
+    MAC         : 00:50:79:66:68:06
+    MTU         : 1500
+
+    VPCS> show ip 
+    NAME        : PC3
+    IP/MASK     : 192.168.1.3/24
+    MAC         : 00:50:79:66:68:08
+    MTU         : 1500
+
+### 7. 
 
     router bgp 65000
         address-family ipv4
