@@ -1,6 +1,6 @@
 ## Домашнее задание №5
 
-### 1. Схема сети и план нумерации для Underlay eBGP, MP-BGP L2VPN EVPN, L2 VXLAN.
+### 1. Схема сети и план нумерации для Underlay eBGP, MP-BGP L2VPN EVPN, L2 Overlay VXLAN.
 
 ![](layout5-l2-vxlan.png)
 
@@ -26,9 +26,9 @@
   
 ### 3. План развёртывания протокола MP-eBGP на Spine на коммутаторах.
 
-##### Примечание. Underlay eBGP был развёрнут в ДЗ №4.
+#### Примечание: Underlay eBGP был развёрнут в ДЗ №4.
  
-#### 3.1 Создаём отдельную bgp peer группу для Leaf коммутаторов с целью распространения в Pod AF L2VPN AFI 25 EVPN SAFI 70.
+#### 3.1 Создаём отдельную bgp peer группу для Leaf коммутаторов с целью распространения в Pod MP-BGP ADDRESS-FAMILY L2VPN AFI 25 EVPN SAFI 70.
  
     router bgp 65000
         neighbor evpn-leaves peer group
@@ -44,7 +44,7 @@
  
         neighbor evpn-leaves next-hop-unchanged 
  
-#### 3.4  Включаем возможность анонсов в MP-BGP расширенных bgp комьюнити с распространением route-distinguisher и route-target атрибутов. 
+#### 3.4  Включаем возможность анонсирования в MP-BGP расширенных bgp комьюнити с распространением route-distinguisher и route-target атрибутов. 
 
         neighbor evpn-leaves send-community extended
 
