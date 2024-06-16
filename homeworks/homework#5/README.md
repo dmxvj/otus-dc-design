@@ -62,22 +62,26 @@
         address-family evpn
             neighbor evpn-leaves activate
 
-#### 3.7  
+
+### 4. План развёртывания протокола MP-eBGP на Leaf на коммутаторах
+
+#### 4.1 Создаём отдельную bgp peer группу для Spine коммутаторов с целью распространения в Pod MP-BGP AF L2VPN AFI 25 EVPN SAFI 70, оставляя по умолчанию поведение атрибута next-hop в eBGP.
+
+    router bgp 65001 
+        neighbor evpn-spines peer group
+        neighbor evpn-spines remote-as 65000
+        neighbor evpn-spines update-source Loopback0
+        neighbor evpn-spines ebgp-multihop 3
+        neighbor evpn-spines send-community extended
+
+        neighbor 10.0.0.1 peer group evpn-spines
+        neighbor 10.0.0.2 peer group evpn-spines
+
+        address-family evpn
+            neighbor evpn-spines activate
 
 
-
-
-#### Активируем протокол BFD для соседей и на Core интерфейсах. 
-
-    router bgp 65000 
-        neighbor 10.1.1.1 bfd 
-        neighbor 10.1.1.3 bfd
-        neighbor 10.1.1.5 bfd
-
-    interface Ethernet1-3
-        bfd interval 100 min-rx 100 multiplier 3 
-
-#### Определяем аутентификацию для соседей. 
+#### 4.2  
  
     router bgp 65000 
         neighbor 10.1.1.1 password 7 B7rhB/vPbn0K7ECNtz1K5w==
