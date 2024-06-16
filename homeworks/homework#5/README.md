@@ -26,19 +26,19 @@
   
 ### 3. План развёртывания протокола MP-eBGP на Spine на коммутаторах.
  
-#### 3.1 Создаём bgp peer группу для leaf коммутаторов с целью распространения в Pod AF L2VPN AFI 25 EVPN SAFI 70.
+#### 3.1 Создаём отдельную bgp peer группу для leaf коммутаторов с целью распространения в Pod AF L2VPN AFI 25 EVPN SAFI 70.
  
     router bgp 65000
         neighbor evpn peer group
 
 
-#### 3.2 
+#### 3.2 MP-eBGP сессии будут строятся на Loopback интерфейсах, которые будут выступать в качестве update-source интерфейсов. Для eBPG указываем параметр multihop.
  
-    router bgp 65000 
-        router-id 10.0.0.1 
+        neighbor evpn update-source Loopback0
+        neighbor evpn ebgp-multihop 3
 
- 
-#### Ставим таймеры Keepalive и Hold на минимальные значения 1 и 3 сек. 
+
+#### 3.3 Ставим таймеры Keepalive и Hold на минимальные значения 1 и 3 сек. 
  
     router bgp 65000
         timers bgp 1 3 
