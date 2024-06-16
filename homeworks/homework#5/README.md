@@ -47,7 +47,7 @@
         neighbor evpn-leaves send-community extended
 
     
-#### 3.5 Указываем какие соседи-лифы у нас будут входить в bgp peer группу evpn.
+#### 3.5 Указываем какие соседи-лифы у нас будут входить в bgp peer группу evpn-leaves.
 
         neighbor 10.0.0.11 peer group evpn-leaves
         neighbor 10.0.0.11 remote-as 65001
@@ -56,7 +56,7 @@
         neighbor 10.0.0.33 peer group evpn-leaves
         neighbor 10.0.0.33 remote-as 65003
  
-#### 3.6 Активируем нашу peer группу и соседей в address-family evpn протокола MP-BGP. 
+#### 3.6 Активируем нашу peer группу и входящих в неё соседей в address-family evpn протокола MP-BGP. 
 
     router bgp 65000
         address-family evpn
@@ -65,7 +65,7 @@
 #### 3.7  
 
 
-    
+
 
 #### Активируем протокол BFD для соседей и на Core интерфейсах. 
 
