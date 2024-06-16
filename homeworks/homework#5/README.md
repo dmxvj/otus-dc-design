@@ -84,6 +84,8 @@
 
 
 ### 5. Подключаем хосты PC1 и PC3 к соотвествующим Leaf1 и Leaf3 коммутаторам.  
+
+#### 5.1 Устанавливаем режим работы интерфейсов в сторону хостов access и назначаем на них vlan 101.
  
     Leaf1#show run interfaces Ethernet 3
     interface Ethernet3
