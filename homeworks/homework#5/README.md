@@ -26,47 +26,46 @@
   
 ### 3. План развёртывания протокола MP-eBGP на Spine на коммутаторах.
  
-#### 3.1 Создаём отдельную bgp peer группу для leaf коммутаторов с целью распространения в Pod AF L2VPN AFI 25 EVPN SAFI 70.
+#### 3.1 Создаём отдельную bgp peer группу для Leaf коммутаторов с целью распространения в Pod AF L2VPN AFI 25 EVPN SAFI 70.
  
     router bgp 65000
-        neighbor evpn peer group
+        neighbor evpn-leaves peer group
 
 
-#### 3.2 MP-eBGP сессии будут строятся на Loopback интерфейсах, которые будут выступать в качестве update-source интерфейсов. Для eBPG указываем параметр multihop.
+#### 3.2 MP-eBGP сессии будут строятся на Loopback интерфейсах. Для Exterior MP-BPG указываем дополнительно параметр multihop, так как TTL в eBGP по умолчанию 1. 
  
-        neighbor evpn update-source Loopback0
-        neighbor evpn ebgp-multihop 3
+        neighbor evpn-leaves update-source Loopback0
+        neighbor evpn-leaves ebgp-multihop 3
 
 
-#### 3.3 Ставим таймеры Keepalive и Hold на минимальные значения 1 и 3 сек. 
+#### 3.3 По умолчанию eBGP меняет параметр и адрес next-hop при получении анонсов, в нашем случае источники и конечные получатели апдейтов это только Leaf коммутаторы, поэтому оставляем адреса источников bgp апдейтов неизменными. 
  
-    router bgp 65000
-        timers bgp 1 3 
+        neighbor evpn-leaves next-hop-unchanged 
  
-#### Устанавливаем административную дистанцию для маршрутов полученных по eBGP 20, а для iBGP маршрутов и локальных подсетей 200. 
+#### 3.4  Включаем возможность анонсов в MP-BGP расширенных bgp комьюнити с распространением route-distinguisher и route-target атрибутов. 
 
-    router bgp 65000 
-        distance bgp 20 200 200 
+        neighbor evpn-leaves send-community extended
 
     
-#### Определяем возможность ECMP для IPv4 префиксов на аплинках у Leaf и на даунлинках у Spine коммутаторов.
+#### 3.5 Указываем какие соседи-лифы у нас будут входить в bgp peer группу evpn.
 
-    router bgp 65000 
-        maximum-paths 8 ecmp 64
+        neighbor 10.0.0.11 peer group evpn-leaves
+        neighbor 10.0.0.11 remote-as 65001
+        neighbor 10.0.0.22 peer group evpn-leaves
+        neighbor 10.0.0.22 remote-as 65002
+        neighbor 10.0.0.33 peer group evpn-leaves
+        neighbor 10.0.0.33 remote-as 65003
  
-#### Подключаем соседей.
+#### 3.6 Активируем нашу peer группу и соседей в address-family evpn протокола MP-BGP. 
 
     router bgp 65000
-        neighbor 10.1.1.1 remote-as 65001
-        neighbor 10.1.1.3 remote-as 65002
-        neighbor 10.1.1.5 remote-as 65003 
+        address-family evpn
+            neighbor evpn-leaves activate
 
-#### Таймер MRAI протокола eBGP для немедленного анонса изменений в сторону соседей устанавливаем на 0.  
+#### 3.7  
 
-    router bgp 65000 
-        neighbor 10.1.1.1 out-delay 0
-        neighbor 10.1.1.3 out-delay 0
-        neighbor 10.1.1.5 out-delay 0 
+
+    
 
 #### Активируем протокол BFD для соседей и на Core интерфейсах. 
 
