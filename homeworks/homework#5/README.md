@@ -117,20 +117,66 @@
     interface Vxlan1
         vxlan source-interface Loopback1
         vxlan udp-port 4789
+
+#### 7.2 Делаем привязку VLAN 101 к VXLAN VNI.
     
+    interface Vxlan1
+        vxlan vlan 101 vni 10101
+
 
 ### Итоговая конфигурация. 
 
-    Spine1#show run | s bgp
-
+    Spine1#show run 
+    !
     service routing protocols model multi-agent
-
+    !
+    hostname Spine1
+    !
+    spanning-tree mode mstp
+    !
+    interface Ethernet1
+        description to-Leaf1
+        mtu 9000
+        no switchport
+        ip address 10.1.1.0/31
+        bfd interval 100 min-rx 100 multiplier 3
+    !
+        interface Ethernet2
+        description to-Leaf2
+        mtu 9000
+        no switchport
+        ip address 10.1.1.2/31
+        bfd interval 100 min-rx 100 multiplier 3
+    !
+    interface Ethernet3
+        description to-Leaf3
+        mtu 9000
+        no switchport
+        ip address 10.1.1.4/31
+        bfd interval 100 min-rx 100 multiplier 3
+    !
+    interface Loopback0
+        ip address 10.0.0.1/32
+    !
+    ip routing
+    !
     router bgp 65000
         router-id 10.0.0.1
         no bgp default ipv4-unicast
         timers bgp 1 3
         distance bgp 20 200 200
         maximum-paths 8 ecmp 64
+        neighbor evpn-leaves peer group
+        neighbor evpn-leaves next-hop-unchanged
+        neighbor evpn-leaves update-source Loopback0
+        neighbor evpn-leaves ebgp-multihop 3
+        neighbor evpn-leaves send-community extended
+        neighbor 10.0.0.11 peer group evpn-leaves
+        neighbor 10.0.0.11 remote-as 65001
+        neighbor 10.0.0.22 peer group evpn-leaves
+        neighbor 10.0.0.22 remote-as 65002
+        neighbor 10.0.0.33 peer group evpn-leaves
+        neighbor 10.0.0.33 remote-as 65003
         neighbor 10.1.1.1 remote-as 65001
         neighbor 10.1.1.1 out-delay 0
         neighbor 10.1.1.1 bfd
@@ -143,12 +189,17 @@
         neighbor 10.1.1.5 out-delay 0
         neighbor 10.1.1.5 bfd
         neighbor 10.1.1.5 password 7 zWKcHc58qGjgbjmUvjsL3A==
-        !
+    !
+        address-family evpn
+            neighbor evpn-leaves activate
+    !
         address-family ipv4
             neighbor 10.1.1.1 activate
             neighbor 10.1.1.3 activate
             neighbor 10.1.1.5 activate
             network 10.0.0.1/32
+    !
+    end
 
 +++++++++++++++++++++++++++++++++++++++++  
 
