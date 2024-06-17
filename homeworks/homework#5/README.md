@@ -353,7 +353,25 @@
     ---------------- --------------
     10.0.0.133       unicast, flood
 
-#### 9.4 Проверяем наличие MAC адресов, полученных через VTEP и локально.
+#### 9.3 Можем удостовериться в наличии полученных и локальных EVPN RT Type-2 префиксы в MP-BGP.
+
+    Leaf1#show bgp evpn route-type mac-ip
+    BGP routing table information for VRF default
+    Router identifier 10.0.0.11, local AS number 65001
+    Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending BGP convergence
+    Origin codes: i - IGP, e - EGP, ? - incomplete
+    AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+        Network                Next Hop              Metric  LocPref Weight  Path
+    * >      RD: 65001:10101 mac-ip 0050.7966.6806
+                                 -                     -       -       0       i
+    * >Ec    RD: 65003:10101 mac-ip 0050.7966.6808
+                                10.0.0.133            -       100     0       65000 65003 i
+    *  ec    RD: 65003:10101 mac-ip 0050.7966.6808
+                                10.0.0.133            -       100     0       65000 65003 i
+
+#### 9.5 Проверяем наличие MAC адресов, полученных через VTEP и локально.
 
     Leaf1#show vxlan address-table
           Vxlan Mac Address Table
@@ -376,17 +394,12 @@
     101    0050.7966.6808    DYNAMIC     Vx1        1       0:00:05 ago
     Total Mac Addresses for this criterion: 2
 
-#### 9.5 .
+#### 9.6 И наконец проверяем IP связность хостов PC1 и PC3.
 
+    PC3> ping 192.168.1.1
 
-    Leaf3#ping 10.0.0.11 source 10.0.0.33 size 9000 df-bit repeat 4
-    PING 10.0.0.11 (10.0.0.11) from 10.0.0.33 : 8972(9000) bytes of data.
-    8980 bytes from 10.0.0.11: icmp_seq=1 ttl=63 time=8.46 ms
-    8980 bytes from 10.0.0.11: icmp_seq=2 ttl=63 time=9.29 ms
-    8980 bytes from 10.0.0.11: icmp_seq=3 ttl=63 time=9.81 ms
-    8980 bytes from 10.0.0.11: icmp_seq=4 ttl=63 time=9.16 ms
-
-    --- 10.0.0.11 ping statistics ---
-    4 packets transmitted, 4 received, 0% packet loss, time 30ms
-    rtt min/avg/max/mdev = 8.466/9.185/9.817/0.486 ms, ipg/ewma 10.150/8.780 ms
-
+    84 bytes from 192.168.1.1 icmp_seq=1 ttl=64 time=20.430 ms
+    84 bytes from 192.168.1.1 icmp_seq=2 ttl=64 time=24.945 ms
+    84 bytes from 192.168.1.1 icmp_seq=3 ttl=64 time=19.526 ms
+    84 bytes from 192.168.1.1 icmp_seq=4 ttl=64 time=22.555 ms
+    84 bytes from 192.168.1.1 icmp_seq=5 ttl=64 time=23.079 ms
