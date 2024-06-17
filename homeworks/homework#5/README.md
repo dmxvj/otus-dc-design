@@ -403,3 +403,12 @@
     84 bytes from 192.168.1.1 icmp_seq=3 ttl=64 time=19.526 ms
     84 bytes from 192.168.1.1 icmp_seq=4 ttl=64 time=22.555 ms
     84 bytes from 192.168.1.1 icmp_seq=5 ttl=64 time=23.079 ms
+
+    vPC1> ping 192.168.1.3
+
+    84 bytes from 192.168.1.3 icmp_seq=1 ttl=64 time=18.616 ms
+    84 bytes from 192.168.1.3 icmp_seq=2 ttl=64 time=20.197 ms
+    84 bytes from 192.168.1.3 icmp_seq=3 ttl=64 time=20.896 ms
+    84 bytes from 192.168.1.3 icmp_seq=4 ttl=64 time=20.779 ms
+    84 bytes from 192.168.1.3 icmp_seq=5 ttl=64 time=19.243 ms
+    
