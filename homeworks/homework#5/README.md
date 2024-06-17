@@ -139,7 +139,7 @@
         route-target both 101:10101
         redistribute learned
 
-### 8. Итоговая конфигурация. 
+### 8. Итоговые конфигурации Spine и Leaf коммутаторов. 
 
     Spine1#show run 
     !
@@ -304,24 +304,26 @@
 
 ###  9. Проверочная часть. 
 
-#### Проверка работы протокола BFD. 
+#### 9.1 Проеряем что MP-BGP сессии у нас поднялись. 
 
-На примере показан пример проверки на одном коммутаторе. 
+На примере показан пример проверки не на всех коммутаторах. 
 
-    Spine2#show bfd peers
-    VRF name: default
-    -----------------
-    DstAddr       MyDisc    YourDisc  Interface/Transport    Type           LastUp 
-    --------- ----------- ----------- -------------------- ------- ----------------
-    10.1.2.1  1478589633  2354517210        Ethernet1(18)  normal   05/31/24 20:52 
-    10.1.2.3  1154948017  2355561545        Ethernet2(19)  normal   05/31/24 20:54 
-    10.1.2.5   320984180  2824604348        Ethernet3(20)  normal   05/31/24 20:56 
+    Spine2#show bgp evpn summary
+    BGP summary information for VRF default
+    Router identifier 10.0.0.2, local AS number 65000
+    Neighbor Status Codes: m - Under maintenance
+        Neighbor  V AS           MsgRcvd   MsgSent  InQ OutQ  Up/Down State   PfxRcd PfxAcc
+        10.0.0.11 4 65001          80684     80623    0    0 19:00:28 Estab   1      1
+        10.0.0.22 4 65002          81150     81150    0    0 18:04:52 Estab   0      0
+        10.0.0.33 4 65003          81185     81156    0    0 18:01:40 Estab   1      1
 
-         LastDown            LastDiag    State
-    -------------------- ------------------- -----
-        05/31/24 20:50       No Diagnostic       Up
-               NA            No Diagnostic       Up
-               NA            No Diagnostic       Up
+    Leaf3#show bgp evpn summary 
+    BGP summary information for VRF default
+    Router identifier 10.0.0.33, local AS number 65003
+    Neighbor Status Codes: m - Under maintenance
+        Neighbor V AS           MsgRcvd   MsgSent  InQ OutQ  Up/Down State   PfxRcd PfxAcc
+        10.0.0.1 4 65000          76094     76077    0    0 18:00:42 Estab   1      1
+        10.0.0.2 4 65000          76122     76149    0    0 18:00:42 Estab   1      1
  
 #### Проверка установления соседства BGP пиров. 
 
