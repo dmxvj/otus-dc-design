@@ -34,7 +34,7 @@
         neighbor evpn-leaves peer group
 
 
-#### 3.2 MP-eBGP сессии будут строятся на Loopback интерфейсах. Для Exterior MP-BPG указываем дополнительно параметр multihop, так как TTL в eBGP по умолчанию 1. 
+#### 3.2 MP-eBGP сессии будут строятся на Loopback интерфейсах. Для Exterior MP-BPG указываем дополнительно параметр multihop равное 3, так как TTL в eBGP по умолчанию 1. 
  
         neighbor evpn-leaves update-source Loopback0
         neighbor evpn-leaves ebgp-multihop 3
