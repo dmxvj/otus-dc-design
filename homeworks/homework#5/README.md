@@ -98,13 +98,13 @@
 
 ### 6. Назначаем IP адреса хостам.
 
-    VPCS> show ip 
+    vPC1> show ip 
     NAME        : PC1
     IP/MASK     : 192.168.1.1/24
     MAC         : 00:50:79:66:68:06
     MTU         : 1500
 
-    VPCS> show ip 
+    vPC3> show ip 
     NAME        : PC3
     IP/MASK     : 192.168.1.3/24
     MAC         : 00:50:79:66:68:08
@@ -396,7 +396,7 @@
 
 #### 9.6 И наконец проверяем IP связность хостов PC1 и PC3.
 
-    PC3> ping 192.168.1.1
+    vPC3> ping 192.168.1.1
 
     84 bytes from 192.168.1.1 icmp_seq=1 ttl=64 time=20.430 ms
     84 bytes from 192.168.1.1 icmp_seq=2 ttl=64 time=24.945 ms
