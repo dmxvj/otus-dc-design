@@ -123,8 +123,23 @@
     interface Vxlan1
         vxlan vlan 101 vni 10101
 
+#### 7.3 Создаём MAC-VRF.
 
-### Итоговая конфигурация. 
+    Leaf1#
+    router bgp 65001
+        vlan 101
+        rd 65001:10101
+        route-target both 101:10101
+        redistribute learned
+    
+    Leaf3#
+    router bgp 65003
+        vlan 101
+        rd 65003:10101
+        route-target both 101:10101
+        redistribute learned
+
+### 8. Итоговая конфигурация. 
 
     Spine1#show run 
     !
@@ -203,37 +218,91 @@
 
 +++++++++++++++++++++++++++++++++++++++++  
 
-    Leaf1#show run | s bgp
-
+    Leaf1#show run 
+    !
     service routing protocols model multi-agent
-
+    !
+    hostname Leaf1
+    !
+    spanning-tree mode mstp
+    !
+    vlan 101
+    !
+    interface Ethernet1
+        description to-Spine1
+        mtu 9000
+        no switchport
+        ip address 10.1.1.1/31
+        bfd interval 100 min-rx 100 multiplier 3
+    !
+    interface Ethernet2
+        description to-Spine2
+        mtu 9000
+        no switchport
+        ip address 10.1.2.1/31
+        bfd interval 100 min-rx 100 multiplier 3
+    !
+    interface Ethernet3
+        switchport access vlan 101
+    !
+    interface Loopback0
+        ip address 10.0.0.11/32
+    !
+        interface Loopback1
+        ip address 10.0.0.111/32
+    !
+    interface Vxlan1
+        vxlan source-interface Loopback1
+        vxlan udp-port 4789
+        vxlan vlan 101 vni 10101
+    !
+    ip routing
+    !
     ip prefix-list connected-to-bgp
         seq 10 permit 10.0.0.0/24 ge 32
-
+    !
     route-map REDIS_CONN permit 10
         match ip address prefix-list connected-to-bgp
-
+        set origin igp
+    !
     router bgp 65001
         router-id 10.0.0.11
         no bgp default ipv4-unicast
         timers bgp 1 3
         distance bgp 20 200 200
         maximum-paths 4 ecmp 64
+        neighbor evpn-spines peer group
+        neighbor evpn-spines remote-as 65000
+        neighbor evpn-spines update-source Loopback0
+        neighbor evpn-spines ebgp-multihop 3
+        neighbor evpn-spines send-community extended
         neighbor spines peer group
         neighbor spines remote-as 65000
         neighbor spines out-delay 0
         neighbor spines bfd
         neighbor spines maximum-routes 10000 warning-only
+        neighbor 10.0.0.1 peer group evpn-spines
+        neighbor 10.0.0.2 peer group evpn-spines
         neighbor 10.1.1.0 peer group spines
         neighbor 10.1.1.0 password 7 B7rhB/vPbn0K7ECNtz1K5w==
         neighbor 10.1.2.0 peer group spines
         neighbor 10.1.2.0 password 7 qJkVzQI8BJZIFaQJU7/LYQ==
         !
+        vlan 101
+            rd 65001:10101
+            route-target both 101:10101
+            redistribute learned
+    !
+        address-family evpn
+            neighbor evpn-spines activate
+    !
         address-family ipv4
             neighbor spines activate
             redistribute connected route-map REDIS_CONN
+    !
+    end
 
-###  Проверочная часть. 
+###  9. Проверочная часть. 
 
 #### Проверка работы протокола BFD. 
 
