@@ -156,7 +156,7 @@
         ip address 10.1.1.0/31
         bfd interval 100 min-rx 100 multiplier 3
     !
-        interface Ethernet2
+    interface Ethernet2
         description to-Leaf2
         mtu 9000
         no switchport
@@ -248,7 +248,7 @@
     interface Loopback0
         ip address 10.0.0.11/32
     !
-        interface Loopback1
+    interface Loopback1
         ip address 10.0.0.111/32
     !
     interface Vxlan1
@@ -411,4 +411,3 @@
     84 bytes from 192.168.1.3 icmp_seq=3 ttl=64 time=20.896 ms
     84 bytes from 192.168.1.3 icmp_seq=4 ttl=64 time=20.779 ms
     84 bytes from 192.168.1.3 icmp_seq=5 ttl=64 time=19.243 ms
-    
