@@ -353,7 +353,7 @@
     ---------------- --------------
     10.0.0.133       unicast, flood
 
-#### 9.3 Можем удостовериться в наличии полученных и локальных EVPN RT Type-2 префиксы в MP-BGP.
+#### 9.3 Можем удостовериться в наличии полученных и локальных EVPN RT Type-2 префиксов в MP-BGP.
 
     Leaf1#show bgp evpn route-type mac-ip
     BGP routing table information for VRF default
