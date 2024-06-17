@@ -44,7 +44,7 @@
  
         neighbor evpn-leaves next-hop-unchanged 
  
-#### 3.4  Включаем функцию анонсирования в MP-BGP расширенных bgp комьюнити с распространением route-distinguisher и route-target атрибутов. 
+#### 3.4  Включаем функцию анонсирования в MP-BGP расширенных bgp комьюнити для распространения route-distinguisher и route-target атрибутов. 
 
         neighbor evpn-leaves send-community extended
 
