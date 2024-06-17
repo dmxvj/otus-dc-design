@@ -344,7 +344,7 @@
         101 10.0.0.133     
     Shared Router MAC is 0000.0000.0000
 
-#### 9.3 Можем проверить стату удалённых VTEP. 
+#### 9.3 Можем проверить статус удалённого VTEP. 
 
     Leaf1#show vxlan vtep
     Remote VTEPS for Vxlan1:
