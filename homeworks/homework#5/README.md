@@ -58,7 +58,7 @@
         neighbor 10.0.0.33 peer group evpn-leaves
         neighbor 10.0.0.33 remote-as 65003
  
-#### 3.6 Активируем нашу peer группу и входящих в неё соседей в address-family evpn протокола MP-BGP. 
+#### 3.6 Активируем нашу peer группу под address-family evpn протокола MP-BGP. 
 
     router bgp 65000
         address-family evpn
