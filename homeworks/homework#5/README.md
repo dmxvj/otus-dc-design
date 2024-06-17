@@ -304,7 +304,7 @@
 
 ###  9. Проверочная часть. 
 
-#### 9.1 Проеряем что MP-BGP сессии у нас поднялись. 
+#### 9.1 Проверяем что MP-BGP сессии у нас поднялись. 
 
 На примере показан пример проверки не на всех коммутаторах. 
 
@@ -325,41 +325,58 @@
         10.0.0.1 4 65000          76094     76077    0    0 18:00:42 Estab   1      1
         10.0.0.2 4 65000          76122     76149    0    0 18:00:42 Estab   1      1
  
-#### Проверка установления соседства BGP пиров. 
+#### 9.2 Проверка статуса VTEP устройства - интерфейса VXLAN, он должен быть в состоянии UP.
 
-    Spine2#show ip bgp summary 
-    BGP summary information for VRF default
-    Router identifier 10.0.0.2, local AS number 65000
-    Neighbor Status Codes: m - Under maintenance
-        Neighbor V AS           MsgRcvd   MsgSent  InQ OutQ  Up/Down State   PfxRcd PfxAcc
-        10.1.2.1 4 65001         449319    449209    0    0    4d02h Estab   2      2
-        10.1.2.3 4 65002         420143    420041    0    0    4d03h Estab   2      2
-        10.1.2.5 4 65003         419768    419772    0    0    4d03h Estab   2      2
+    Leaf1#show interfaces Vxlan1
+    Vxlan1 is up, line protocol is up (connected)
+    Hardware is Vxlan
+    Source interface is Loopback1 and is active with 10.0.0.111
+    Listening on UDP port 4789
+    Replication/Flood Mode is headend with Flood List Source: EVPN
+    Remote MAC learning via EVPN
+    VNI mapping to VLANs
+    Static VLAN to VNI mapping is 
+    [101, 10101]     
+    Note: All Dynamic VLANs used by VCS are internal VLANs.
+        Use 'show vxlan vni' for details.
+    Static VRF to VNI mapping is not configured
+    Headend replication flood vtep list is:
+        101 10.0.0.133     
+    Shared Router MAC is 0000.0000.0000
 
-#### Проверка таблицы маршрутизации, ECMP и IP связности на примере 3-его Leaf коммутатора. 
+#### 9.3 Можем проверить стату удалённых VTEP. 
 
-    Leaf3#show ip route 
+    Leaf1#show vxlan vtep
+    Remote VTEPS for Vxlan1:
 
-    VRF: default
-    Codes: C - connected, S - static, K - kernel, 
-           B I - iBGP, B E - eBGP, R - RIP, I L1 - IS-IS level 1,
-       
-    Gateway of last resort is not set
+    VTEP             Tunnel Type(s)
+    ---------------- --------------
+    10.0.0.133       unicast, flood
 
-    B E      10.0.0.1/32 [20/0] via 10.1.1.4, Ethernet1
-    B E      10.0.0.2/32 [20/0] via 10.1.2.4, Ethernet2
-    B E      10.0.0.11/32 [20/0] via 10.1.1.4, Ethernet1
-                                 via 10.1.2.4, Ethernet2
-    B E      10.0.0.22/32 [20/0] via 10.1.1.4, Ethernet1
-                                 via 10.1.2.4, Ethernet2
-    C        10.0.0.33/32 is directly connected, Loopback0
-    B E      10.0.0.111/32 [20/0] via 10.1.1.4, Ethernet1
-                                  via 10.1.2.4, Ethernet2
-    B E      10.0.0.122/32 [20/0] via 10.1.1.4, Ethernet1
-                                  via 10.1.2.4, Ethernet2
-    C        10.0.0.133/32 is directly connected, Loopback1
-    C        10.1.1.4/31 is directly connected, Ethernet1
-    C        10.1.2.4/31 is directly connected, Ethernet2
+#### 9.4 Проверяем наличие MAC адресов, полученных через VTEP и локально.
+
+    Leaf1#show vxlan address-table
+          Vxlan Mac Address Table
+    ----------------------------------------------------------------------
+
+    VLAN  Mac Address     Type      Prt  VTEP             Moves   Last Move
+    ----  -----------     ----      ---  ----             -----   ---------
+    101  0050.7966.6808  EVPN      Vx1  10.0.0.133       1       0:03:43 ago
+    Total Remote Mac Addresses for this criterion: 1
+
+    Total number of remote VTEPS:  1
+
+    Leaf1#show mac address-table unicast
+          Mac Address Table
+    ------------------------------------------------------------------
+
+    Vlan    Mac Address       Type        Ports      Moves   Last Move
+    ----    -----------       ----        -----      -----   ---------
+    101    0050.7966.6806    DYNAMIC     Et3        1       0:00:05 ago
+    101    0050.7966.6808    DYNAMIC     Vx1        1       0:00:05 ago
+    Total Mac Addresses for this criterion: 2
+
+#### 9.5 .
 
 
     Leaf3#ping 10.0.0.11 source 10.0.0.33 size 9000 df-bit repeat 4
