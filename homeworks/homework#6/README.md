@@ -1,6 +1,6 @@
 ## Домашнее задание №6
 
-### 1. Схема сети и план нумерации для Underlay eBGP, MP-BGP L2VPN EVPN, L2 и L3-Gateway Overlay VXLAN.
+### 1. Схема сети и план нумерации для Underlay eBGP, MP-BGP L2VPN EVPN, L2 и L3-Gateway (L3 VTEP) Overlay VXLAN.
 
 ![](layout6-L3-vxlan.png)
 
@@ -29,28 +29,32 @@
 | :--------:| :---------------:|:----------------:|:----------------:|:----------------:|
 |  IP       | 192.168.1.1/24   | 192.168.2.2/24   | 192.168.1.3/24   | 192.168.2.4/24   |
 |  Gateway  | 192.168.1.254/24 | 192.168.2.254/24 | 192.168.1.254/24 | 192.168.2.254/24 |
+|   VLAN    |       101        |        102       |         101      |      102         |
 
-### 3. План развёртывания протокола MP-eBGP на Spine на коммутаторах.
+### 3. План развёртывания L3-Gateway на Leaf на коммутаторах.
 
-### Примечание: Underlay eBGP был развёрнут в ДЗ №4.
+### Примечание: Underlay eBGP был развёрнут в ДЗ №4; L2 Overlay VXLAN в ДЗ №5. 
  
-#### 3.1 Создаём отдельную bgp peer группу для Leaf коммутаторов с целью распространения в Pod MP-BGP ADDRESS-FAMILY L2VPN AFI 25 EVPN SAFI 70.
+#### 3.1 Создаём и убеждаемся в наличии vlan 101 и 102 на коммутаторах.
  
-    router bgp 65000
-        neighbor evpn-leaves peer group
+    vlan 101-102
+
+#### 3.2 Создаём IPB интерфейсы VTEP IP. 
+ 
+    interface Vlan101
+        description IRB VLAN101
+        ip address virtual 192.168.1.254/24
+    !
+    interface Vlan102
+        description IRB VLAN102
+        ip address virtual 192.168.2.254/24
 
 
-#### 3.2 MP-eBGP сессии будут строятся на Loopback интерфейсах. Для Exterior MP-BPG указываем дополнительно параметр multihop равное 3, так как TTL в eBGP по умолчанию равен 1. 
+#### 3.3 Создаём одинаковый на всех коммуторах VARP MAC. 
  
-        neighbor evpn-leaves update-source Loopback0
-        neighbor evpn-leaves ebgp-multihop 3
-
-
-#### 3.3 По умолчанию eBGP меняет параметр и адрес next-hop при получении анонсов, в нашем случае источники и конечные получатели апдейтов это только Leaf коммутаторы, поэтому оставляем адреса источников mp-bgp апдейтов неизменными. 
+    ip virtual-router mac-address 00:1c:73:00:00:aa
  
-        neighbor evpn-leaves next-hop-unchanged 
- 
-#### 3.4  Включаем функцию анонсирования в MP-BGP расширенных bgp комьюнити для распространения route-distinguisher и route-target атрибутов. 
+#### 3.4  . 
 
         neighbor evpn-leaves send-community extended
 
