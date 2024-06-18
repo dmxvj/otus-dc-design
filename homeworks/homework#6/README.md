@@ -137,7 +137,7 @@
     !
     interface Loopback1
         ip address 10.0.0.122/32
-!
+    !
     interface Management1
         shutdown
     !
