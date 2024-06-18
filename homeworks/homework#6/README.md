@@ -108,219 +108,219 @@
 
 ### 7. Итоговые конфигурации Leaf коммутаторов. 
 
-Leaf2#show run
+    Leaf2#show run
+    !
+    service routing protocols model multi-agent
+    !
+    hostname Leaf2
+    !
+    spanning-tree mode mstp
+    !
+    vlan 101-102
+    !
+    interface Ethernet1
+        description to-Spine1
+        mtu 9000
+        no switchport
+        ip address 10.1.1.3/31
+        bfd interval 100 min-rx 100 multiplier 3
+    !
+    interface Ethernet2
+        description to-Spine2
+        mtu 9000
+        no switchport
+        ip address 10.1.2.3/31
+        bfd interval 100 min-rx 100 multiplier 3
+    !
+    interface Loopback0
+        ip address 10.0.0.22/32
+    !
+    interface Loopback1
+        ip address 10.0.0.122/32
 !
-service routing protocols model multi-agent
-!
-hostname Leaf2
-!
-spanning-tree mode mstp
-!
-vlan 101-102
-!
-interface Ethernet1
-   description to-Spine1
-   mtu 9000
-   no switchport
-   ip address 10.1.1.3/31
-   bfd interval 100 min-rx 100 multiplier 3
-!
-interface Ethernet2
-   description to-Spine2
-   mtu 9000
-   no switchport
-   ip address 10.1.2.3/31
-   bfd interval 100 min-rx 100 multiplier 3
-!
-interface Loopback0
-   ip address 10.0.0.22/32
-!
-interface Loopback1
-   ip address 10.0.0.122/32
-!
-interface Management1
-   shutdown
-!
-interface Vlan101
-   description IRB VLAN102
-   ip address virtual 192.168.1.254/24
-!
-interface Vlan102
-   description IRB VLAN102
-   ip address virtual 192.168.2.254/24
-!
-interface Vxlan1
-   vxlan source-interface Loopback1
-   vxlan udp-port 4789
-   vxlan vlan 101 vni 10101
-   vxlan vlan 102 vni 10102
-!
-ip virtual-router mac-address 00:1c:73:00:00:aa
-!
-ip routing
-!
-ip prefix-list connected-to-bgp
-   seq 10 permit 10.0.0.0/24 ge 32
-!
-route-map REDIS_CONN permit 10
-   match ip address prefix-list connected-to-bgp
-   set origin igp
-!
-router bgp 65002
-   router-id 10.0.0.22
-   no bgp default ipv4-unicast
-   timers bgp 1 3
-   distance bgp 20 200 200
-   maximum-paths 4 ecmp 64
-   neighbor evpn peer group
-   neighbor evpn remote-as 65000
-   neighbor evpn update-source Loopback0
-   neighbor evpn ebgp-multihop 3
-   neighbor evpn send-community extended
-   neighbor evpn-spines peer group
-   neighbor evpn-spines remote-as 65000
-   neighbor evpn-spines update-source Loopback0
-   neighbor evpn-spines ebgp-multihop 3
-   neighbor evpn-spines send-community extended
-   neighbor spines peer group
-   neighbor spines remote-as 65000
-   neighbor spines out-delay 0
-   neighbor spines bfd
-   neighbor spines maximum-routes 10000 warning-only
-   neighbor 10.0.0.1 peer group evpn-spines
-   neighbor 10.0.0.2 peer group evpn-spines
-   neighbor 10.1.1.2 peer group spines
-   neighbor 10.1.1.2 password 7 6ZlbNVefGOoRTw2KYF4N2A==
-   neighbor 10.1.2.2 peer group spines
-   neighbor 10.1.2.2 password 7 k/sLtX4he3Tjv/dsbbHquA==
-   !
-   vlan 101
-      rd 65002:10101
-      route-target both 101:10101
-   !
-   vlan 102
-      rd 65002:10102
-      route-target both 102:10102
-      redistribute learned
-   !
-   address-family evpn
-      neighbor evpn-spines activate
-   !
-   address-family ipv4
-      neighbor spines activate
-      redistribute connected route-map REDIS_CONN
-!
-end
+    interface Management1
+        shutdown
+    !
+    interface Vlan101
+        description IRB VLAN102
+        ip address virtual 192.168.1.254/24
+    !
+    interface Vlan102
+        description IRB VLAN102
+        ip address virtual 192.168.2.254/24
+    !
+    interface Vxlan1
+        vxlan source-interface Loopback1
+        vxlan udp-port 4789
+        vxlan vlan 101 vni 10101
+        vxlan vlan 102 vni 10102
+    !
+    ip virtual-router mac-address 00:1c:73:00:00:aa
+    !
+    ip routing
+    !
+    ip prefix-list connected-to-bgp
+        seq 10 permit 10.0.0.0/24 ge 32
+    !
+    route-map REDIS_CONN permit 10
+        match ip address prefix-list connected-to-bgp
+        set origin igp
+    !
+    router bgp 65002
+        router-id 10.0.0.22
+        no bgp default ipv4-unicast
+        timers bgp 1 3
+        distance bgp 20 200 200
+        maximum-paths 4 ecmp 64
+        neighbor evpn peer group
+        neighbor evpn remote-as 65000
+        neighbor evpn update-source Loopback0
+        neighbor evpn ebgp-multihop 3
+        neighbor evpn send-community extended
+        neighbor evpn-spines peer group
+        neighbor evpn-spines remote-as 65000
+        neighbor evpn-spines update-source Loopback0
+        neighbor evpn-spines ebgp-multihop 3
+        neighbor evpn-spines send-community extended
+        neighbor spines peer group
+        neighbor spines remote-as 65000
+        neighbor spines out-delay 0
+        neighbor spines bfd
+        neighbor spines maximum-routes 10000 warning-only
+        neighbor 10.0.0.1 peer group evpn-spines
+        neighbor 10.0.0.2 peer group evpn-spines
+        neighbor 10.1.1.2 peer group spines
+        neighbor 10.1.1.2 password 7 6ZlbNVefGOoRTw2KYF4N2A==
+        neighbor 10.1.2.2 peer group spines
+        neighbor 10.1.2.2 password 7 k/sLtX4he3Tjv/dsbbHquA==
+    !
+    vlan 101
+        rd 65002:10101
+        route-target both 101:10101
+    !
+    vlan 102
+        rd 65002:10102
+        route-target both 102:10102
+        redistribute learned
+    !
+    address-family evpn
+        neighbor evpn-spines activate
+    !
+    address-family ipv4
+        neighbor spines activate
+        redistribute connected route-map REDIS_CONN
+    !
+    end
 
 +++++++++++++++++++++++++++++++++++++++++  
 
-Leaf3#show run
-!
-service routing protocols model multi-agent
-!
-hostname Leaf3
-!
-spanning-tree mode mstp
-!
-vlan 101-102
-!
-interface Ethernet1
-   description to-Spine1
-   mtu 9000
-   no switchport
-   ip address 10.1.1.5/31
-   bfd interval 100 min-rx 100 multiplier 3
-!
-interface Ethernet2
-   description to-Spine2
-   mtu 9000
-   no switchport
-   ip address 10.1.2.5/31
-   bfd interval 100 min-rx 100 multiplier 3
-!
-interface Ethernet3
-   description to-Host3
-   switchport access vlan 101
-!
-interface Ethernet4
-   description to-Host4
-   switchport access vlan 102
-!
-interface Loopback0
-   ip address 10.0.0.33/32
-!
-interface Loopback1
-   ip address 10.0.0.133/32
-!
-interface Management1
-   shutdown
-!
-interface Vlan101
-   description IRB VLAN101
-   ip address virtual 192.168.1.254/24
-!
-interface Vlan102
-   description IRB VLAN102
-   ip address virtual 192.168.2.254/24
-!
-interface Vxlan1
-   vxlan source-interface Loopback1
-   vxlan udp-port 4789
-   vxlan vlan 101 vni 10101
-   vxlan vlan 102 vni 10102
-!
-ip virtual-router mac-address 00:1c:73:00:00:aa
-!
-ip routing
-!
-ip prefix-list connected-to-bgp
-   seq 10 permit 10.0.0.0/24 ge 32
-!
-route-map REDIS_CONN permit 10
-   match ip address prefix-list connected-to-bgp
-   set origin igp
-!
-router bgp 65003
-   router-id 10.0.0.33
-   no bgp default ipv4-unicast
-   timers bgp 1 3
-   distance bgp 20 200 200
-   maximum-paths 4 ecmp 64
-   neighbor evpn-spines peer group
-   neighbor evpn-spines remote-as 65000
-   neighbor evpn-spines update-source Loopback0
-   neighbor evpn-spines ebgp-multihop 3
-   neighbor evpn-spines send-community extended
-   neighbor spines peer group
-   neighbor spines remote-as 65000
-   neighbor spines out-delay 0
-   neighbor spines bfd
-   neighbor spines maximum-routes 10000 warning-only
-   neighbor 10.0.0.1 peer group evpn-spines
-   neighbor 10.0.0.2 peer group evpn-spines
-   neighbor 10.1.1.4 peer group spines
-   neighbor 10.1.1.4 password 7 zWKcHc58qGjgbjmUvjsL3A==
-   neighbor 10.1.2.4 peer group spines
-   neighbor 10.1.2.4 password 7 qEWAlLTC4nfcCtaj0TBNoQ==
-   !
-   vlan 101
-      rd 65003:10101
-      route-target both 101:10101
-      redistribute learned
-   !
-   vlan 102
-      rd 65003:10102
-      route-target both 102:10102
-      redistribute learned
-   !
-   address-family evpn
-      neighbor evpn-spines activate
-   !
-   address-family ipv4
-      neighbor spines activate
-      redistribute connected route-map REDIS_CONN
-!
-end
+    Leaf3#show run
+    !
+    service routing protocols model multi-agent
+    !
+    hostname Leaf3
+    !
+    spanning-tree mode mstp
+    !
+    vlan 101-102
+    !
+    interface Ethernet1
+        description to-Spine1
+        mtu 9000
+        no switchport
+        ip address 10.1.1.5/31
+        bfd interval 100 min-rx 100 multiplier 3
+    !
+    interface Ethernet2
+        description to-Spine2
+        mtu 9000
+        no switchport
+        ip address 10.1.2.5/31
+        bfd interval 100 min-rx 100 multiplier 3
+    !
+    interface Ethernet3
+        description to-Host3
+        switchport access vlan 101
+    !
+    interface Ethernet4
+        description to-Host4
+        switchport access vlan 102
+    !
+    interface Loopback0
+        ip address 10.0.0.33/32
+    !
+    interface Loopback1
+        ip address 10.0.0.133/32
+    !
+    interface Management1
+        shutdown
+    !
+    interface Vlan101
+        description IRB VLAN101
+        ip address virtual 192.168.1.254/24
+    !
+    interface Vlan102
+        description IRB VLAN102
+        ip address virtual 192.168.2.254/24
+    !
+    interface Vxlan1
+        vxlan source-interface Loopback1
+        vxlan udp-port 4789
+        vxlan vlan 101 vni 10101
+        vxlan vlan 102 vni 10102
+    !
+    ip virtual-router mac-address 00:1c:73:00:00:aa
+    !
+    ip routing
+    !
+    ip prefix-list connected-to-bgp
+        seq 10 permit 10.0.0.0/24 ge 32
+    !
+    route-map REDIS_CONN permit 10
+        match ip address prefix-list connected-to-bgp
+        set origin igp
+    !
+    router bgp 65003
+        router-id 10.0.0.33
+        no bgp default ipv4-unicast
+        timers bgp 1 3
+        distance bgp 20 200 200
+        maximum-paths 4 ecmp 64
+        neighbor evpn-spines peer group
+        neighbor evpn-spines remote-as 65000
+        neighbor evpn-spines update-source Loopback0
+        neighbor evpn-spines ebgp-multihop 3
+        neighbor evpn-spines send-community extended
+        neighbor spines peer group
+        neighbor spines remote-as 65000
+        neighbor spines out-delay 0
+        neighbor spines bfd
+        neighbor spines maximum-routes 10000 warning-only
+        neighbor 10.0.0.1 peer group evpn-spines
+        neighbor 10.0.0.2 peer group evpn-spines
+        neighbor 10.1.1.4 peer group spines
+        neighbor 10.1.1.4 password 7 zWKcHc58qGjgbjmUvjsL3A==
+        neighbor 10.1.2.4 peer group spines
+        neighbor 10.1.2.4 password 7 qEWAlLTC4nfcCtaj0TBNoQ==
+    !
+    vlan 101
+        rd 65003:10101
+        route-target both 101:10101
+        redistribute learned
+    !
+    vlan 102
+        rd 65003:10102
+        route-target both 102:10102
+        redistribute learned
+    !
+    address-family evpn
+        neighbor evpn-spines activate
+    !
+    address-family ipv4
+        neighbor spines activate
+        redistribute connected route-map REDIS_CONN
+    !
+    end
 
 ###  8. Проверочная часть. 
 
