@@ -84,10 +84,12 @@
  
     Leaf2#show run interfaces Ethernet 3
     interface Ethernet3
+        description to-Host2
         switchport access vlan 102
 
     Leaf3#show run interfaces Ethernet 4
-    interface Ethernet3
+    interface Ethernet4
+        description to-Host4
         switchport access vlan 102
 
 
@@ -132,6 +134,10 @@
         no switchport
         ip address 10.1.2.3/31
         bfd interval 100 min-rx 100 multiplier 3
+    !
+    interface Ethernet3
+        description to-Host2
+        switchport access vlan 102
     !
     interface Loopback0
         ip address 10.0.0.22/32
