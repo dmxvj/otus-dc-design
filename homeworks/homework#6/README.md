@@ -54,26 +54,28 @@
  
     ip virtual-router mac-address 00:1c:73:00:00:aa
  
-#### 3.4  . 
+#### 3.4 Привязываем vlan к vxlan. 
 
-        neighbor evpn-leaves send-community extended
+    interface Vxlan1
+        vxlan source-interface Loopback1
+        vxlan udp-port 4789
+        vxlan vlan 101 vni 10101
+        vxlan vlan 102 vni 10102
 
     
-#### 3.5 Указываем какие соседи-лифы у нас будут входить в bgp peer группу evpn-leaves.
+#### 3.5 Создаём MAC-VRF по количеству виланов.
 
-        neighbor 10.0.0.11 peer group evpn-leaves
-        neighbor 10.0.0.11 remote-as 65001
-        neighbor 10.0.0.22 peer group evpn-leaves
-        neighbor 10.0.0.22 remote-as 65002
-        neighbor 10.0.0.33 peer group evpn-leaves
-        neighbor 10.0.0.33 remote-as 65003
+    router bgp 65001
+        vlan 101
+            rd 65001:10101
+            route-target both 101:10101
+            redistribute learned
+    !
+        vlan 102
+            rd 65001:10102
+            route-target both 102:10102
  
-#### 3.6 Активируем нашу peer группу под address-family evpn протокола MP-BGP. 
-
-    router bgp 65000
-        address-family evpn
-            neighbor evpn-leaves activate
-
+Если vlan не назначен на портах, то можно не указывать redistribute learned.
 
 ### 4. План развёртывания протокола MP-eBGP на Leaf на коммутаторах
 
