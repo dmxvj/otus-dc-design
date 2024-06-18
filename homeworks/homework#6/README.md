@@ -375,7 +375,7 @@
 
 #### 9.3 Можем удостовериться в наличии полученных и локальных EVPN RT Type-2 префиксов в MP-BGP и работы ECMP.
 
-    Leaf1#show bgp evpn route-type mac-ip
+    Leaf1#show bgp evpn route-type mac-ip 192.168.1.1
     BGP routing table information for VRF default
     Router identifier 10.0.0.11, local AS number 65001
     Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
@@ -383,11 +383,48 @@
     Origin codes: i - IGP, e - EGP, ? - incomplete
     AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
 
-        Network                Next Hop              Metric  LocPref Weight  Path
-    * >      RD: 65001:10101 mac-ip 0050.7966.6806
+          Network                Next Hop              Metric  LocPref Weight  Path
+    * >      RD: 65001:10101 mac-ip 0050.7966.6806 192.168.1.1
                                  -                     -       -       0       i
-    * >Ec    RD: 65003:10101 mac-ip 0050.7966.6808
-                                10.0.0.133            -       100     0       65000 65003 i
-    *  ec    RD: 65003:10101 mac-ip 0050.7966.6808
-                                10.0.0.133            -       100     0       65000 65003 i
 
+    Leaf1#show bgp evpn route-type mac-ip 192.168.1.3
+    BGP routing table information for VRF default
+    Router identifier 10.0.0.11, local AS number 65001
+    Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending BGP convergence
+    Origin codes: i - IGP, e - EGP, ? - incomplete
+    AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+    * >Ec    RD: 65003:10101 mac-ip 0050.7966.6808 192.168.1.3
+                                 10.0.0.133            -       100     0       65000 65003 i
+    *  ec    RD: 65003:10101 mac-ip 0050.7966.6808 192.168.1.3
+                                 10.0.0.133            -       100     0       65000 65003 i
+
+    Leaf1#show bgp evpn route-type mac-ip 192.168.2.2
+    BGP routing table information for VRF default
+    Router identifier 10.0.0.11, local AS number 65001
+    Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending BGP convergence
+    Origin codes: i - IGP, e - EGP, ? - incomplete
+    AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+    * >Ec    RD: 65002:10102 mac-ip 0050.7966.6807 192.168.2.2
+                                 10.0.0.122            -       100     0       65000 65002 i
+    *  ec    RD: 65002:10102 mac-ip 0050.7966.6807 192.168.2.2
+                                 10.0.0.122            -       100     0       65000 65002 i
+
+    Leaf1#show bgp evpn route-type mac-ip 192.168.2.4
+    BGP routing table information for VRF default
+    Router identifier 10.0.0.11, local AS number 65001
+    Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
+                    c - Contributing to ECMP, % - Pending BGP convergence
+    Origin codes: i - IGP, e - EGP, ? - incomplete
+    AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+
+          Network                Next Hop              Metric  LocPref Weight  Path
+    * >Ec    RD: 65003:10102 mac-ip 0050.7966.6809 192.168.2.4
+                                 10.0.0.133            -       100     0       65000 65003 i
+    *  ec    RD: 65003:10102 mac-ip 0050.7966.6809 192.168.2.4
+                                 10.0.0.133            -       100     0       65000 65003 i
