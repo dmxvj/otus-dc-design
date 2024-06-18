@@ -64,7 +64,7 @@
         vxlan vlan 102 vni 10102
 
     
-#### 3.5 Создаём MAC-VRF по количеству виланов.
+#### 3.5 Создаём MAC-VRF для каждого vlan.
 
     router bgp 65001
         vlan 101
