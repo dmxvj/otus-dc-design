@@ -51,7 +51,7 @@
         ip address virtual 192.168.2.254/24
 
 
-#### 3.3 Создаём одинаковый на всех коммуторах VARP MAC. 
+#### 3.3 Создаём одинаковый на всех коммутаторах VARP MAC. 
  
     ip virtual-router mac-address 00:1c:73:00:00:aa
  
