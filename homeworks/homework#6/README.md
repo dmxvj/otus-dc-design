@@ -367,15 +367,6 @@
     102    0050.7966.6809    DYNAMIC     Vx1        1       0:02:33 ago
     Total Mac Addresses for this criterion: 7
 
-#### 9.3 Можем проверить статус удалённого VTEP. 
-
-    Leaf1#show vxlan vtep
-    Remote VTEPS for Vxlan1:
-
-    VTEP             Tunnel Type(s)
-    ---------------- --------------
-    10.0.0.133       unicast, flood
-
 #### 9.3 Можем удостовериться в наличии полученных и локальных EVPN RT Type-2 префиксов в MP-BGP и работы ECMP.
 
     Leaf1#show bgp evpn route-type mac-ip
@@ -393,45 +384,4 @@
                                 10.0.0.133            -       100     0       65000 65003 i
     *  ec    RD: 65003:10101 mac-ip 0050.7966.6808
                                 10.0.0.133            -       100     0       65000 65003 i
-
-#### 9.5 Проверяем наличие MAC адресов, полученных через VTEP и локально.
-
-    Leaf1#show vxlan address-table
-          Vxlan Mac Address Table
-    ----------------------------------------------------------------------
-
-    VLAN  Mac Address     Type      Prt  VTEP             Moves   Last Move
-    ----  -----------     ----      ---  ----             -----   ---------
-    101  0050.7966.6808  EVPN      Vx1  10.0.0.133       1       0:03:43 ago
-    Total Remote Mac Addresses for this criterion: 1
-
-    Total number of remote VTEPS:  1
-
-    Leaf1#show mac address-table unicast
-          Mac Address Table
-    ------------------------------------------------------------------
-
-    Vlan    Mac Address       Type        Ports      Moves   Last Move
-    ----    -----------       ----        -----      -----   ---------
-    101    0050.7966.6806    DYNAMIC     Et3        1       0:00:05 ago
-    101    0050.7966.6808    DYNAMIC     Vx1        1       0:00:05 ago
-    Total Mac Addresses for this criterion: 2
-
-#### 9.6 И наконец проверяем IP связность хостов PC1 и PC3.
-
-    vPC3> ping 192.168.1.1
-
-    84 bytes from 192.168.1.1 icmp_seq=1 ttl=64 time=20.430 ms
-    84 bytes from 192.168.1.1 icmp_seq=2 ttl=64 time=24.945 ms
-    84 bytes from 192.168.1.1 icmp_seq=3 ttl=64 time=19.526 ms
-    84 bytes from 192.168.1.1 icmp_seq=4 ttl=64 time=22.555 ms
-    84 bytes from 192.168.1.1 icmp_seq=5 ttl=64 time=23.079 ms
-
-    vPC1> ping 192.168.1.3
-
-    84 bytes from 192.168.1.3 icmp_seq=1 ttl=64 time=18.616 ms
-    84 bytes from 192.168.1.3 icmp_seq=2 ttl=64 time=20.197 ms
-    84 bytes from 192.168.1.3 icmp_seq=3 ttl=64 time=20.896 ms
-    84 bytes from 192.168.1.3 icmp_seq=4 ttl=64 time=20.779 ms
-    84 bytes from 192.168.1.3 icmp_seq=5 ttl=64 time=19.243 ms
 
