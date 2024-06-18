@@ -40,7 +40,7 @@
  
     vlan 101-102
 
-#### 3.2 Создаём IPB интерфейсы VTEP IP. 
+#### 3.2 Создаём IRB интерфейсы VTEP IP. 
  
     interface Vlan101
         description IRB VLAN101
