@@ -25,11 +25,12 @@
 
 #### 2.3 Адреса хостов.
 
-|  Hostname |       PC1        |        PC2       |         PC3      |        PC4       |
-| :--------:| :---------------:|:----------------:|:----------------:|:----------------:|
-|  IP       | 192.168.1.1/24   | 192.168.2.2/24   | 192.168.1.3/24   | 192.168.2.4/24   |
-|  Gateway  | 192.168.1.254/24 | 192.168.2.254/24 | 192.168.1.254/24 | 192.168.2.254/24 |
-|   VLAN    |       101        |        102       |         101      |      102         |
+|  Hostname |        PC1        |        PC2        |        PC3        |        PC4        |
+| :--------:| :----------------:|:-----------------:|:-----------------:|:-----------------:|
+|  IP       |  192.168.1.1/24   |  192.168.2.2/24   |  192.168.1.3/24   |  192.168.2.4/24   |
+|  Gateway  |  192.168.1.254/24 |  192.168.2.254/24 | 192.168.1.254/24  |  192.168.2.254/24 |
+|   VLAN    |        101        |         102       |         101       |        102        |
+|   MAC     | 00:50:79:66:68:06 | 00:50:79:66:68:07 | 00:50:79:66:68:08 | 00:50:79:66:68:09 |
 
 ### 3. План развёртывания L3-Gateway на Leaf на коммутаторах.
 
@@ -324,45 +325,47 @@
 
 ###  8. Проверочная часть. 
 
-#### 9.1 Проверяем что MP-BGP сессии у нас поднялись. 
+#### 9.1 Сразу проверяем доступность хостов пингом. 
 
-На примере показан пример проверки не на всех коммутаторах. 
+На примере показан пример проверки с хоста PC1. 
 
-    Spine2#show bgp evpn summary
-    BGP summary information for VRF default
-    Router identifier 10.0.0.2, local AS number 65000
-    Neighbor Status Codes: m - Under maintenance
-        Neighbor  V AS           MsgRcvd   MsgSent  InQ OutQ  Up/Down State   PfxRcd PfxAcc
-        10.0.0.11 4 65001          80684     80623    0    0 19:00:28 Estab   1      1
-        10.0.0.22 4 65002          81150     81150    0    0 18:04:52 Estab   0      0
-        10.0.0.33 4 65003          81185     81156    0    0 18:01:40 Estab   1      1
+    PC1> ping 192.168.1.3 -c 2
+    84 bytes from 192.168.1.3 icmp_seq=1 ttl=64 time=51.896 ms
+    84 bytes from 192.168.1.3 icmp_seq=2 ttl=64 time=19.726 ms
 
-    Leaf3#show bgp evpn summary 
-    BGP summary information for VRF default
-    Router identifier 10.0.0.33, local AS number 65003
-    Neighbor Status Codes: m - Under maintenance
-        Neighbor V AS           MsgRcvd   MsgSent  InQ OutQ  Up/Down State   PfxRcd PfxAcc
-        10.0.0.1 4 65000          76094     76077    0    0 18:00:42 Estab   1      1
-        10.0.0.2 4 65000          76122     76149    0    0 18:00:42 Estab   1      1
+    PC1> ping 192.168.2.2 -c 2
+    84 bytes from 192.168.2.2 icmp_seq=1 ttl=63 time=141.124 ms
+    84 bytes from 192.168.2.2 icmp_seq=2 ttl=63 time=22.423 ms
+
+    PC1> ping 192.168.2.4 -c 2
+    84 bytes from 192.168.2.4 icmp_seq=1 ttl=63 time=141.139 ms
+    84 bytes from 192.168.2.4 icmp_seq=2 ttl=63 time=26.680 ms
  
-#### 9.2 Проверка статуса VTEP устройства - интерфейса VXLAN, он должен быть в состоянии UP & UP.
+#### 9.2 Проверяем наличие MAC адресов, полученных через VTEP и локально.
 
-    Leaf1#show interfaces Vxlan1
-    Vxlan1 is up, line protocol is up (connected)
-    Hardware is Vxlan
-    Source interface is Loopback1 and is active with 10.0.0.111
-    Listening on UDP port 4789
-    Replication/Flood Mode is headend with Flood List Source: EVPN
-    Remote MAC learning via EVPN
-    VNI mapping to VLANs
-    Static VLAN to VNI mapping is 
-    [101, 10101]     
-    Note: All Dynamic VLANs used by VCS are internal VLANs.
-        Use 'show vxlan vni' for details.
-    Static VRF to VNI mapping is not configured
-    Headend replication flood vtep list is:
-        101 10.0.0.133     
-    Shared Router MAC is 0000.0000.0000
+    Leaf1#show vxlan address-table
+          Vxlan Mac Address Table
+    ----------------------------------------------------------------------
+    VLAN  Mac Address     Type      Prt  VTEP             Moves   Last Move
+    ----  -----------     ----      ---  ----             -----   ---------
+    101  0050.7966.6808  EVPN      Vx1  10.0.0.133       1       0:02:33 ago
+    102  0050.7966.6807  EVPN      Vx1  10.0.0.122       1       0:02:25 ago
+    102  0050.7966.6809  EVPN      Vx1  10.0.0.133       1       0:02:18 ago
+    Total Remote Mac Addresses for this criterion: 3
+
+    Leaf1#show mac address-table unicast 
+          Mac Address Table
+    ------------------------------------------------------------------
+    Vlan    Mac Address       Type        Ports      Moves   Last Move
+    ----    -----------       ----        -----      -----   ---------
+    1    001c.7300.00aa    STATIC      Cpu
+    101    001c.7300.00aa    STATIC      Cpu
+    101    0050.7966.6806    DYNAMIC     Et3        1       0:02:48 ago
+    101    0050.7966.6808    DYNAMIC     Vx1        1       0:02:48 ago
+    102    001c.7300.00aa    STATIC      Cpu
+    102    0050.7966.6807    DYNAMIC     Vx1        1       0:02:39 ago
+    102    0050.7966.6809    DYNAMIC     Vx1        1       0:02:33 ago
+    Total Mac Addresses for this criterion: 7
 
 #### 9.3 Можем проверить статус удалённого VTEP. 
 
