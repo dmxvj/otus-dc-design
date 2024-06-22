@@ -468,7 +468,7 @@
     84 bytes from 192.168.2.4 icmp_seq=1 ttl=63 time=141.139 ms
     84 bytes from 192.168.2.4 icmp_seq=2 ttl=63 time=26.680 ms
  
-#### 6.2 Проверяем наличие BGP апдейтов EVPN AD Type-1.
+#### 6.2 Проверяем наличие BGP апдейтов EVPN Type-4.
 
     Leaf2#show bgp evpn route-type ethernet-segment esi 0000:0000:0000:0000:0001 
     BGP routing table information for VRF default
@@ -503,7 +503,7 @@
                                  10.0.0.133            -       100     0       65000 65003 i
 
 
-#### 6.3 Проверяем наличие BGP апдейтов EVPN Type-4.
+#### 6.3 Проверяем наличие BGP апдейтов EVPN AD Type-1.
 
     Leaf2#show bgp evpn route-type auto-discovery esi 0000:0000:0000:0000:0001 
     BGP routing table information for VRF default
