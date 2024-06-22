@@ -69,7 +69,7 @@
         evpn ethernet-segment
             identifier 0000:0000:0000:0000:0001
     
-#### 3.5 Назначаем 6-байтный Route-Target на ESI для принятия EVPN апдейтов Type-4. 
+#### 3.5 Назначаем 6-байтный Route-Target на ESI для принятия EVPN апдейтов Type-1 и Type-4. 
 
     interface Port-Channel1
         evpn ethernet-segment
