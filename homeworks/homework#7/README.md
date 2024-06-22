@@ -36,80 +36,67 @@
 
 ### Примечание: Underlay eBGP был развёрнут в ДЗ №4; L2 Overlay VXLAN в ДЗ №5, L3 VTEP в ДЗ №6. 
  
-#### 3.1 Создаём и убеждаемся в наличии vlan 101 и 102 на коммутаторах.
+#### 3.1 Создаём агрегированный интерфейс Port-channel на двух коммутаторах, работающего под контролем протокола LACP.
  
-    vlan 101-102
+    Leaf1#
+        interface Ethernet5
+            channel-group 1 mode active
 
-#### 3.2 Создаём IRB интерфейсы VTEP IP. 
+    Leaf2#
+        interface Ethernet5
+            channel-group 1 mode active
+
+#### 3.2 Переводим его в режим trunk и разрешаем прохождение виланов 101 и 102 на двух коммутаторах.
+
+    Leaf1#
+        interface Port-Channel1
+            switchport trunk allowed vlan 101-102
+            switchport mode trunk
  
-    interface Vlan101
-        description IRB VLAN101
-        ip address virtual 192.168.1.254/24
-    !
-    interface Vlan102
-        description IRB VLAN102
-        ip address virtual 192.168.2.254/24
+    Leaf2#
+        interface Port-Channel1
+            switchport trunk allowed vlan 101-102
+            switchport mode trunk
 
-
-#### 3.3 Создаём одинаковый на всех коммутаторах VARP MAC. 
+#### 3.3 Назначаем агрегированному интерфейсу уникальный системный идентификатор Id. 
  
-    ip virtual-router mac-address 00:1c:73:00:00:aa
+    interface Port-Channel1
+        lacp system-id 0000.0000.0001
  
-#### 3.4 Привязываем vlan к vxlan. 
+#### 3.4 Создаём на агрегированном интерфейсе ESI - EVPN сегмент 10-байтный идентификатор необходимого для multihoming. 
 
-    interface Vxlan1
-        vxlan source-interface Loopback1
-        vxlan udp-port 4789
-        vxlan vlan 101 vni 10101
-        vxlan vlan 102 vni 10102
-
+    interface Port-Channel1
+        evpn ethernet-segment
+            identifier 0000:0000:0000:0000:0001
     
-#### 3.5 Создаём MAC-VRF для каждого vlan.
+#### 3.5 Назначаем 6-байтный Route-Target на ESI для принятия EVPN апдейтов Type-4. 
 
-    router bgp 65001
-        vlan 101
-            rd 65001:10101
-            route-target both 101:10101
-            redistribute learned
-    !
-        vlan 102
-            rd 65001:10102
-            route-target both 102:10102
+    interface Port-Channel1
+        evpn ethernet-segment
+            route-target import 00:00:00:00:00:01
+
+### 5. На стороне коммутатора CE создаём агрегированный Port-channel интерфейс.  
+
+#### 5.1 С активацией протокола LACP.
  
-Если vlan не назначен на портах, то можно не указывать redistribute learned.
+Switch1#
+    interface GigabitEthernet0/0
+        channel-protocol lacp
+        channel-group 1 mode active
 
-### 5. Подключаем хосты PC2 и PC4 к соотвествующим Leaf2 и Leaf3 коммутаторам.  
+    interface GigabitEthernet1/0
+        channel-protocol lacp
+        channel-group 1 mode active
 
-#### 5.1 Устанавливаем режим работы интерфейсов в сторону хостов access и назначаем на них vlan 102.
- 
-    Leaf2#show run interfaces Ethernet 3
-    interface Ethernet3
-        description to-Host2
-        switchport access vlan 102
+#### 5.2 Переводим порт в режим транка.
 
-    Leaf3#show run interfaces Ethernet 4
-    interface Ethernet4
-        description to-Host4
-        switchport access vlan 102
+    Switch1#
+        interface Port-channel1
+        switchport trunk allowed vlan 101,102
+        switchport trunk encapsulation dot1q
+        switchport mode trunk
 
-
-### 6. Назначаем IP адреса и адреса Gateway хостам.
-
-    vPC2> show ip 
-    NAME        : PC2
-    IP/MASK     : 192.168.2.2/24
-    GATEWAY     : 192.168.2.254
-    MAC         : 00:50:79:66:68:07
-    MTU         : 1500
-
-    vPC4> show ip 
-    NAME        : PC4
-    IP/MASK     : 192.168.2.4/24
-    GATEWAY     : 192.168.2.254
-    MAC         : 00:50:79:66:68:09
-    MTU         : 1500
-
-### 7. Итоговые конфигурации Leaf коммутаторов. 
+### 6. Итоговые конфигурации Leaf коммутаторов. 
 
     Leaf2#show run
     !
