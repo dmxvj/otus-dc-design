@@ -98,7 +98,7 @@
 
 ### 5. Итоговые конфигурации Leaf коммутаторов. 
 
-    Leaf1#shщц run 
+    Leaf1#show run 
     !
     service routing protocols model multi-agent
     !
