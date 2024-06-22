@@ -75,9 +75,9 @@
         evpn ethernet-segment
             route-target import 00:00:00:00:00:01
 
-### 5. На стороне коммутатора CE создаём агрегированный Port-channel интерфейс.  
+### 4. На стороне коммутатора CE создаём агрегированный Port-channel интерфейс.  
 
-#### 5.1 С активацией протокола LACP.
+#### 4.1 С активацией протокола LACP.
  
     Switch1#
         interface GigabitEthernet0/0
@@ -88,7 +88,7 @@
         channel-protocol lacp
         channel-group 1 mode active
 
-#### 5.2 Переводим порт в режим транка.
+#### 4.2 Переводим порт в режим транка.
 
     Switch1#
         interface Port-channel1
@@ -96,7 +96,7 @@
         switchport trunk encapsulation dot1q
         switchport mode trunk
 
-### 6. Итоговые конфигурации Leaf коммутаторов. 
+### 5. Итоговые конфигурации Leaf коммутаторов. 
 
     Leaf2#show run
     !
