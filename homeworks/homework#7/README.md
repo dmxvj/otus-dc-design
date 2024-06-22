@@ -79,12 +79,12 @@
 
 #### 5.1 С активацией протокола LACP.
  
-Switch1#
-    interface GigabitEthernet0/0
+    Switch1#
+        interface GigabitEthernet0/0
         channel-protocol lacp
         channel-group 1 mode active
 
-    interface GigabitEthernet1/0
+        interface GigabitEthernet1/0
         channel-protocol lacp
         channel-group 1 mode active
 
