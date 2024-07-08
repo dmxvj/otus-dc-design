@@ -355,25 +355,178 @@
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    
+    Border-Leaf3#show run
+
+    service routing protocols model multi-agent
+    !
+    hostname Border-Leaf3
+    !
+    spanning-tree mode mstp
+    !
+    vlan 101
+    !
+    vrf instance vpn-1
+    !
+    interface Ethernet1
+        description to-Spine1
+        mtu 9000
+        no switchport
+        ip address 10.1.1.5/31
+        bfd interval 100 min-rx 100 multiplier 3
+    !
+    interface Ethernet2
+        description to-Spine2
+        mtu 9000
+        no switchport
+        ip address 10.1.2.5/31
+        bfd interval 100 min-rx 100 multiplier 3
+    !
+    interface Ethernet8
+        no switchport
+    !
+    interface Ethernet8.101
+        encapsulation dot1q vlan 101
+        vrf vpn-1
+        ip address 10.1.3.1/30
+    !
+    interface Loopback0
+        ip address 10.0.0.33/32
+    !
+    interface Loopback1
+        ip address 10.0.0.133/32
+    !
+    interface Management1
+    !
+    interface Vlan101
+        description IRB VLAN101
+        vrf vpn-1
+        ip address 192.168.1.254/24
+    !
+    interface Vxlan1
+        vxlan source-interface Loopback1
+        vxlan udp-port 4789
+        vxlan vlan 101 vni 10101
+        vxlan vrf vpn-1 vni 10001
+    !
+    ip routing
+    ip routing vrf vpn-1
+    !
+    ip prefix-list connected-to-bgp
+        seq 10 permit 10.0.0.0/24 ge 32
+    !
+    route-map REDIS_CONN permit 10
+        match ip address prefix-list connected-to-bgp
+        set origin igp
+    !
+    router bgp 65003
+        router-id 10.0.0.33
+        no bgp default ipv4-unicast
+        timers bgp 1 3
+        distance bgp 20 200 200
+        maximum-paths 4 ecmp 64
+        neighbor evpn-spines peer group
+        neighbor evpn-spines remote-as 65000
+        neighbor evpn-spines update-source Loopback0
+        neighbor evpn-spines ebgp-multihop 3
+        neighbor evpn-spines send-community extended
+        neighbor spines peer group
+        neighbor spines remote-as 65000
+        neighbor spines out-delay 0
+        neighbor spines bfd
+        neighbor spines maximum-routes 10000 warning-only
+        neighbor 10.0.0.1 peer group evpn-spines
+        neighbor 10.0.0.2 peer group evpn-spines
+        neighbor 10.1.1.4 peer group spines
+        neighbor 10.1.1.4 password 7 zWKcHc58qGjgbjmUvjsL3A==
+        neighbor 10.1.2.4 peer group spines
+        neighbor 10.1.2.4 password 7 qEWAlLTC4nfcCtaj0TBNoQ==
+        !
+        vlan 101
+            rd 65003:10101
+            route-target both 101:10101
+            redistribute learned
+        !
+        address-family evpn
+            neighbor evpn-spines activate
+        !
+        address-family ipv4
+            no neighbor evpn-spines activate
+            neighbor spines activate
+            redistribute connected route-map REDIS_CONN
+        !
+        vrf vpn-1
+            rd 65003:1
+            route-target import evpn 1:1
+            route-target export evpn 1:1
+            router-id 10.0.0.33
+            neighbor 10.1.3.2 remote-as 64999
+            neighbor 10.1.3.2 send-community extended
+            redistribute connected
+        !
+        address-family ipv4
+            neighbor 10.1.3.2 activate
+    !
+    end
+
+    ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    Router1#show run 
+    !
+    hostname Router1
+    !
+    ip cef
+    no ipv6 cef
+    !
+    interface Loopback0
+        ip address 10.10.10.10 255.255.255.255
+    !
+    interface GigabitEthernet0/1
+        no ip address
+    !
+    interface GigabitEthernet0/1.101
+        encapsulation dot1Q 101
+        ip address 10.1.3.2 255.255.255.252
+    !
+    interface GigabitEthernet0/2
+        no ip address
+    !
+    interface GigabitEthernet0/2.2
+        encapsulation dot1Q 2
+        ip address 10.1.3.6 255.255.255.252
+    !
+    router bgp 64999
+        bgp router-id 10.10.10.10
+        bgp log-neighbor-changes
+        timers bgp 1 3
+        neighbor 10.1.3.1 remote-as 65003
+        neighbor 10.1.3.5 remote-as 65002
+    !
+        address-family ipv4
+            neighbor 10.1.3.1 activate
+            neighbor 10.1.3.1 send-community both
+            neighbor 10.1.3.5 activate
+            neighbor 10.1.3.5 send-community both
+        exit-address-family
+    !
+    end
 
 ###  6. Проверочная часть. 
 
-#### 6.1 Сразу проверяем доступность хостов пингом. 
+#### 6.1 Проверяем на Border Leaf коммутаторах статус eBGP сессий с внешним маршрутизатором Router1. 
 
-На примере показан пример проверки с хоста PC1. 
+    Border-Leaf2#show bgp summary vrf vpn-2
+    BGP summary information for VRF vpn-2
+    Router identifier 10.0.0.22, local AS number 65002
+    Neighbor          AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc
+    -------- ----------- ------------- ----------------------- -------------- ---------- ----------
+    10.1.3.6       64999 Established   IPv4 Unicast            Negotiated              2          2
 
-    PC1> ping 192.168.1.3 -c 2
-    84 bytes from 192.168.1.3 icmp_seq=1 ttl=64 time=51.896 ms
-    84 bytes from 192.168.1.3 icmp_seq=2 ttl=64 time=19.726 ms
-
-    PC1> ping 192.168.2.2 -c 2
-    84 bytes from 192.168.2.2 icmp_seq=1 ttl=63 time=141.124 ms
-    84 bytes from 192.168.2.2 icmp_seq=2 ttl=63 time=22.423 ms
-
-    PC1> ping 192.168.2.4 -c 2
-    84 bytes from 192.168.2.4 icmp_seq=1 ttl=63 time=141.139 ms
-    84 bytes from 192.168.2.4 icmp_seq=2 ttl=63 time=26.680 ms
+    Border-Leaf3#show bgp summary vrf vpn-1
+    BGP summary information for VRF vpn-1
+    Router identifier 10.0.0.33, local AS number 65003
+    Neighbor          AS Session State AFI/SAFI                AFI/SAFI State   NLRI Rcd   NLRI Acc
+    -------- ----------- ------------- ----------------------- -------------- ---------- ----------
+    10.1.3.2       64999 Established   IPv4 Unicast            Negotiated              2          2
  
 #### 6.2 Проверяем наличие BGP апдейтов EVPN Type-4.
 
