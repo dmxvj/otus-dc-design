@@ -606,7 +606,7 @@
         Extended Community: Route-Target-AS:1:1 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:01:00:27:03:91
         VNI: 10001
 
-#### 6.4 Проверяем наличие префиксов в таблице маршрутизации VRF.
+#### 6.3 Проверяем наличие префиксов в таблице маршрутизации VRF.
 
     Leaf1#show ip route vrf vpn-1
 
