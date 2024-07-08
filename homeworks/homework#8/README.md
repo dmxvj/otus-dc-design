@@ -528,96 +528,104 @@
     -------- ----------- ------------- ----------------------- -------------- ---------- ----------
     10.1.3.2       64999 Established   IPv4 Unicast            Negotiated              2          2
  
-#### 6.2 Проверяем наличие BGP апдейтов EVPN Type-4.
+#### 6.2 Проверяем наличие BGP апдейтов EVPN Type-5.
 
-    Leaf2#show bgp evpn route-type ethernet-segment esi 0000:0000:0000:0000:0001 
+    Leaf1#show bgp evpn route-type ip-prefix 192.168.2.0/24 
+    BGP routing table information for VRF default
+    Router identifier 10.0.0.11, local AS number 65001
+    BGP routing table entry for ip-prefix 192.168.2.0/24, Route Distinguisher: 65002:2
+    Paths: 2 available
+    65000 65002
+        10.0.0.122 from 10.0.0.1 (10.0.0.1)
+        Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP head, ECMP, best, ECMP contributor
+        Extended Community: Route-Target-AS:2:2 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:01:00:be:ab:97
+        VNI: 10002
+    65000 65002
+        10.0.0.122 from 10.0.0.2 (10.0.0.2)
+        Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP, ECMP contributor
+        Extended Community: Route-Target-AS:2:2 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:01:00:be:ab:97
+        VNI: 10002
+    BGP routing table entry for ip-prefix 192.168.2.0/24, Route Distinguisher: 65003:1
+    Paths: 2 available
+    65000 65003 64999 65002
+        10.0.0.133 from 10.0.0.2 (10.0.0.2)
+        Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP head, ECMP, best, ECMP contributor
+        Extended Community: Route-Target-AS:1:1 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:01:00:27:03:91
+        VNI: 10001
+    65000 65003 64999 65002
+        10.0.0.133 from 10.0.0.1 (10.0.0.1)
+        Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP, ECMP contributor
+        Extended Community: Route-Target-AS:1:1 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:01:00:27:03:91
+        VNI: 10001
+
+
+    Border-Leaf2#show bgp evpn route-type ip-prefix 192.168.1.0/24 
     BGP routing table information for VRF default
     Router identifier 10.0.0.22, local AS number 65002
-    Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
-                    c - Contributing to ECMP, % - Pending BGP convergence
-    Origin codes: i - IGP, e - EGP, ? - incomplete
-    AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+    BGP routing table entry for ip-prefix 192.168.1.0/24, Route Distinguisher: 65002:2
+    Paths: 1 available
+        64999 65003
+        - from - (0.0.0.0)
+        Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, best
+        Extended Community: Route-Target-AS:2:2 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:01:00:be:ab:97
+        VNI: 10002
+    BGP routing table entry for ip-prefix 192.168.1.0/24, Route Distinguisher: 65003:1
+        Paths: 2 available
+        65000 65003
+            10.0.0.133 from 10.0.0.2 (10.0.0.2)
+            Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP head, ECMP, best, ECMP contributor
+            Extended Community: Route-Target-AS:1:1 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:01:00:27:03:91
+            VNI: 10001
+        65000 65003
+            10.0.0.133 from 10.0.0.1 (10.0.0.1)
+            Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP, ECMP contributor
+            Extended Community: Route-Target-AS:1:1 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:01:00:27:03:91
+            VNI: 10001
 
-          Network                Next Hop              Metric  LocPref Weight  Path
-    * >Ec    RD: 10.0.0.111:1 ethernet-segment 0000:0000:0000:0000:0001 10.0.0.111
-                                 10.0.0.111            -       100     0       65000 65001 i
-    *  ec    RD: 10.0.0.111:1 ethernet-segment 0000:0000:0000:0000:0001 10.0.0.111
-                                 10.0.0.111            -       100     0       65000 65001 i
-    * >      RD: 10.0.0.122:1 ethernet-segment 0000:0000:0000:0000:0001 10.0.0.122
-                                 -                     -       -       0       i
 
-    Leaf2#show bgp evpn route-type ethernet-segment esi 0000:0000:0000:0000:0002
+    Border-Leaf3#show bgp evpn route-type ip-prefix 192.168.2.0/24
     BGP routing table information for VRF default
-    Router identifier 10.0.0.22, local AS number 65002
-    Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
-                    c - Contributing to ECMP, % - Pending BGP convergence
-    Origin codes: i - IGP, e - EGP, ? - incomplete
-    AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
+    Router identifier 10.0.0.33, local AS number 65003
+    BGP routing table entry for ip-prefix 192.168.2.0/24, Route Distinguisher: 65002:2
+    Paths: 2 available
+        65000 65002
+            10.0.0.122 from 10.0.0.1 (10.0.0.1)
+            Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP head, ECMP, best, ECMP contributor
+            Extended Community: Route-Target-AS:2:2 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:01:00:be:ab:97
+            VNI: 10002
+        65000 65002
+            10.0.0.122 from 10.0.0.2 (10.0.0.2)
+            Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, ECMP, ECMP contributor
+            Extended Community: Route-Target-AS:2:2 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:01:00:be:ab:97
+            VNI: 10002
+    BGP routing table entry for ip-prefix 192.168.2.0/24, Route Distinguisher: 65003:1
+    Paths: 1 available
+        64999 65002
+        - from - (0.0.0.0)
+        Origin IGP, metric -, localpref 100, weight 0, tag 0, valid, external, best
+        Extended Community: Route-Target-AS:1:1 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:01:00:27:03:91
+        VNI: 10001
 
-          Network                Next Hop              Metric  LocPref Weight  Path
-    * >      RD: 10.0.0.122:1 ethernet-segment 0000:0000:0000:0000:0002 10.0.0.122
-                                 -                     -       -       0       i
-    * >Ec    RD: 10.0.0.133:1 ethernet-segment 0000:0000:0000:0000:0002 10.0.0.133
-                                 10.0.0.133            -       100     0       65000 65003 i
-    *  ec    RD: 10.0.0.133:1 ethernet-segment 0000:0000:0000:0000:0002 10.0.0.133
-                                 10.0.0.133            -       100     0       65000 65003 i
+#### 6.3 Проверяем доступность шлюзов и хостов.
 
+    PC1> ping 192.168.1.254
+    84 bytes from 192.168.1.254 icmp_seq=1 ttl=64 time=18.129 ms
+    84 bytes from 192.168.1.254 icmp_seq=2 ttl=64 time=17.257 ms
+    84 bytes from 192.168.1.254 icmp_seq=3 ttl=64 time=15.236 ms
+    84 bytes from 192.168.1.254 icmp_seq=4 ttl=64 time=19.913 ms
+    84 bytes from 192.168.1.254 icmp_seq=5 ttl=64 time=16.696 ms
 
-#### 6.3 Проверяем наличие BGP апдейтов EVPN AD Type-1.
+    PC1> ping 192.168.2.254
+    84 bytes from 192.168.2.254 icmp_seq=1 ttl=62 time=35.411 ms
+    84 bytes from 192.168.2.254 icmp_seq=2 ttl=62 time=22.665 ms
+    84 bytes from 192.168.2.254 icmp_seq=3 ttl=62 time=27.841 ms
+    84 bytes from 192.168.2.254 icmp_seq=4 ttl=62 time=25.230 ms
+    84 bytes from 192.168.2.254 icmp_seq=5 ttl=62 time=32.215 ms
 
-    Leaf2#show bgp evpn route-type auto-discovery esi 0000:0000:0000:0000:0001 
-    BGP routing table information for VRF default
-    Router identifier 10.0.0.22, local AS number 65002
-    Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
-                    c - Contributing to ECMP, % - Pending BGP convergence
-    Origin codes: i - IGP, e - EGP, ? - incomplete
-    AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
-
-          Network                Next Hop              Metric  LocPref Weight  Path
-    * >Ec    RD: 65001:10101 auto-discovery 0 0000:0000:0000:0000:0001
-                                 10.0.0.111            -       100     0       65000 65001 i
-    *  ec    RD: 65001:10101 auto-discovery 0 0000:0000:0000:0000:0001
-                                 10.0.0.111            -       100     0       65000 65001 i
-    * >Ec    RD: 65001:10102 auto-discovery 0 0000:0000:0000:0000:0001
-                                 10.0.0.111            -       100     0       65000 65001 i
-    *  ec    RD: 65001:10102 auto-discovery 0 0000:0000:0000:0000:0001
-                                 10.0.0.111            -       100     0       65000 65001 i
-    * >      RD: 65002:10101 auto-discovery 0 0000:0000:0000:0000:0001
-                                 -                     -       -       0       i
-    * >      RD: 65002:10102 auto-discovery 0 0000:0000:0000:0000:0001
-                                 -                     -       -       0       i
-    * >Ec    RD: 10.0.0.111:1 auto-discovery 0000:0000:0000:0000:0001
-                                 10.0.0.111            -       100     0       65000 65001 i
-    *  ec    RD: 10.0.0.111:1 auto-discovery 0000:0000:0000:0000:0001
-                                 10.0.0.111            -       100     0       65000 65001 i
-    * >      RD: 10.0.0.122:1 auto-discovery 0000:0000:0000:0000:0001
-                                 -                     -       -       0       i
-
-    Leaf2#show bgp evpn route-type auto-discovery esi 0000:0000:0000:0000:0002
-    BGP routing table information for VRF default
-    Router identifier 10.0.0.22, local AS number 65002
-    Route status codes: * - valid, > - active, S - Stale, E - ECMP head, e - ECMP
-                    c - Contributing to ECMP, % - Pending BGP convergence
-    Origin codes: i - IGP, e - EGP, ? - incomplete
-    AS Path Attributes: Or-ID - Originator ID, C-LST - Cluster List, LL Nexthop - Link Local Nexthop
-
-          Network                Next Hop              Metric  LocPref Weight  Path
-    * >      RD: 65002:10101 auto-discovery 0 0000:0000:0000:0000:0002
-                                 -                     -       -       0       i
-    * >      RD: 65002:10102 auto-discovery 0 0000:0000:0000:0000:0002
-                                 -                     -       -       0       i
-    * >Ec    RD: 65003:10101 auto-discovery 0 0000:0000:0000:0000:0002
-                                 10.0.0.133            -       100     0       65000 65003 i
-    *  ec    RD: 65003:10101 auto-discovery 0 0000:0000:0000:0000:0002
-                                 10.0.0.133            -       100     0       65000 65003 i
-    * >Ec    RD: 65003:10102 auto-discovery 0 0000:0000:0000:0000:0002
-                                 10.0.0.133            -       100     0       65000 65003 i
-    *  ec    RD: 65003:10102 auto-discovery 0 0000:0000:0000:0000:0002
-                                 10.0.0.133            -       100     0       65000 65003 i
-    * >      RD: 10.0.0.122:1 auto-discovery 0000:0000:0000:0000:0002
-                                 -                     -       -       0       i
-    * >Ec    RD: 10.0.0.133:1 auto-discovery 0000:0000:0000:0000:0002
-                                 10.0.0.133            -       100     0       65000 65003 i
-    *  ec    RD: 10.0.0.133:1 auto-discovery 0000:0000:0000:0000:0002
-                                 10.0.0.133            -       100     0       65000 65003 i
-    Leaf2#
+    PC1> ping 192.168.2.1  
+    84 bytes from 192.168.2.1 icmp_seq=1 ttl=61 time=44.521 ms
+    84 bytes from 192.168.2.1 icmp_seq=2 ttl=61 time=31.626 ms
+    84 bytes from 192.168.2.1 icmp_seq=3 ttl=61 time=25.119 ms
+    84 bytes from 192.168.2.1 icmp_seq=4 ttl=61 time=30.175 ms
+    84 bytes from 192.168.2.1 icmp_seq=5 ttl=61 time=28.071 ms
+    
