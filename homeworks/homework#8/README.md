@@ -112,13 +112,14 @@
 
     Border-Leaf3#
 
-    vrf vpn-1
-        neighbor 10.1.3.2 remote-as 64999
-        neighbor 10.1.3.2 send-community extended
-        redistribute connected
-        !
-        address-family ipv4
-            neighbor 10.1.3.2 activate
+    router bgp 65003
+        vrf vpn-1
+            neighbor 10.1.3.2 remote-as 64999
+            neighbor 10.1.3.2 send-community extended
+            redistribute connected
+            !
+            address-family ipv4
+                neighbor 10.1.3.2 activate
 
     Router1#
     
@@ -133,6 +134,8 @@
         neighbor 10.1.3.1 send-community both
 
 ### 4. Создаём аналогичную конфигурацию на Border Leaf2 и внешнем маршрутизаторе Router1.  
+
+### Примечание: Leaf2 совмещает у меня функции Leaf и Border коммутатора.
 
 #### 4.1 Конфиг для Border Leaf2 и Router1 можно посмотреть в Итоговой конфигурации.
 
@@ -237,33 +240,17 @@
 
 +++++++++++++++++++++++++++++++++++++++++  
 
-    Leaf2#show run 
-    !
+    Border-Leaf2#show run
+
     service routing protocols model multi-agent
     !
-    hostname Leaf2
+    hostname Border-Leaf2
     !
     spanning-tree mode mstp
     !
-    vlan 101-102
+    vlan 102
     !
-    interface Port-Channel1
-        switchport trunk allowed vlan 101-102
-        switchport mode trunk
-    !
-        evpn ethernet-segment
-            identifier 0000:0000:0000:0000:0001
-            route-target import 00:00:00:00:00:01
-        lacp system-id 0000.0000.0001
-    !
-    interface Port-Channel2
-        switchport trunk allowed vlan 101-102
-        switchport mode trunk
-    !
-        evpn ethernet-segment
-            identifier 0000:0000:0000:0000:0002
-            route-target import 00:00:00:00:00:02
-        lacp system-id 0000.0000.0002
+    vrf instance vpn-2
     !
     interface Ethernet1
         description to-Spine1
@@ -277,13 +264,18 @@
         mtu 9000
         no switchport
         ip address 10.1.2.3/31
-            bfd interval 100 min-rx 100 multiplier 3
+        bfd interval 100 min-rx 100 multiplier 3
     !
-    interface Ethernet5
-        channel-group 1 mode active
+    interface Ethernet3
+        switchport access vlan 102
     !
-    interface Ethernet7
-        channel-group 2 mode active
+    interface Ethernet8
+        no switchport
+    !
+    interface Ethernet8.2
+        encapsulation dot1q vlan 2
+        vrf vpn-2
+        ip address 10.1.3.5/30
     !
     interface Loopback0
         ip address 10.0.0.22/32
@@ -291,23 +283,20 @@
     interface Loopback1
         ip address 10.0.0.122/32
     !
-    interface Vlan101
-        description IRB VLAN102
-        ip address virtual 192.168.1.254/24
+    interface Management1
     !
     interface Vlan102
         description IRB VLAN102
-        ip address virtual 192.168.2.254/24
+        vrf vpn-2
+        ip address 192.168.2.254/24
     !
     interface Vxlan1
         vxlan source-interface Loopback1
         vxlan udp-port 4789
-        vxlan vlan 101 vni 10101
-        vxlan vlan 102 vni 10102
-    !
-    ip virtual-router mac-address 00:1c:73:00:00:aa
+        vxlan vrf vpn-2 vni 10002
     !
     ip routing
+    ip routing vrf vpn-2
     !
     ip prefix-list connected-to-bgp
         seq 10 permit 10.0.0.0/24 ge 32
@@ -322,11 +311,6 @@
         timers bgp 1 3
         distance bgp 20 200 200
         maximum-paths 4 ecmp 64
-        neighbor evpn peer group
-        neighbor evpn remote-as 65000
-        neighbor evpn update-source Loopback0
-        neighbor evpn ebgp-multihop 3
-        neighbor evpn send-community extended
         neighbor evpn-spines peer group
         neighbor evpn-spines remote-as 65000
         neighbor evpn-spines update-source Loopback0
@@ -343,138 +327,31 @@
         neighbor 10.1.1.2 password 7 6ZlbNVefGOoRTw2KYF4N2A==
         neighbor 10.1.2.2 peer group spines
         neighbor 10.1.2.2 password 7 k/sLtX4he3Tjv/dsbbHquA==
-        !
-        vlan 101
-            rd 65002:10101
-            route-target both 101:10101
-            redistribute learned
-        !
-        vlan 102
-            rd 65002:10102
-            route-target both 102:10102
-            redistribute learned
-        !
+    !
         address-family evpn
             neighbor evpn-spines activate
-        !
+    !
         address-family ipv4
-            no neighbor evpn-spines activate
             neighbor spines activate
             redistribute connected route-map REDIS_CONN
+    !
+    vrf vpn-2
+        rd 65002:2
+        route-target import evpn 2:2
+        route-target export evpn 2:2
+        router-id 10.0.0.22
+        neighbor 10.1.3.6 remote-as 64999
+        neighbor 10.1.3.6 send-community extended
+        redistribute connected
+        !
+        address-family ipv4
+            neighbor 10.1.3.6 activate
     !
     end
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    Leaf3#show run 
-    !
-    service routing protocols model multi-agent
-    !
-    hostname Leaf3
-    !
-    spanning-tree mode mstp
-    !
-    vlan 101-102
-    !
-    interface Port-Channel2
-        switchport trunk allowed vlan 101-102
-        switchport mode trunk
-    !
-        evpn ethernet-segment
-            identifier 0000:0000:0000:0000:0002
-            route-target import 00:00:00:00:00:02
-        lacp system-id 0000.0000.0002
-    !
-    interface Ethernet1
-        description to-Spine1
-        mtu 9000
-        no switchport
-        ip address 10.1.1.5/31
-        bfd interval 100 min-rx 100 multiplier 3
-    !
-    interface Ethernet2
-        description to-Spine2
-        mtu 9000
-        no switchport
-        ip address 10.1.2.5/31
-        bfd interval 100 min-rx 100 multiplier 3
-    !
-    interface Ethernet7
-        channel-group 2 mode active
-    !
-    interface Loopback0
-        ip address 10.0.0.33/32
-    !
-    interface Loopback1
-        ip address 10.0.0.133/32
-    !
-    interface Vlan101
-        description IRB VLAN101
-        ip address virtual 192.168.1.254/24
-    !
-    interface Vlan102
-        description IRB VLAN102
-        ip address virtual 192.168.2.254/24
-    !
-    interface Vxlan1
-        vxlan source-interface Loopback1
-        vxlan udp-port 4789
-        vxlan vlan 101 vni 10101
-        vxlan vlan 102 vni 10102
-    !
-    ip virtual-router mac-address 00:1c:73:00:00:aa
-    !
-    ip routing
-    !
-    ip prefix-list connected-to-bgp
-        seq 10 permit 10.0.0.0/24 ge 32
-    !
-    route-map REDIS_CONN permit 10
-        match ip address prefix-list connected-to-bgp
-        set origin igp
-    !
-    router bgp 65003
-        router-id 10.0.0.33
-        no bgp default ipv4-unicast
-        timers bgp 1 3
-        distance bgp 20 200 200
-        maximum-paths 4 ecmp 64
-        neighbor evpn-spines peer group
-        neighbor evpn-spines remote-as 65000
-        neighbor evpn-spines update-source Loopback0
-        neighbor evpn-spines ebgp-multihop 3
-        neighbor evpn-spines send-community extended
-        neighbor spines peer group
-        neighbor spines remote-as 65000
-        neighbor spines out-delay 0
-        neighbor spines bfd
-        neighbor spines maximum-routes 10000 warning-only
-        neighbor 10.0.0.1 peer group evpn-spines
-        neighbor 10.0.0.2 peer group evpn-spines
-        neighbor 10.1.1.4 peer group spines
-        neighbor 10.1.1.4 password 7 zWKcHc58qGjgbjmUvjsL3A==
-        neighbor 10.1.2.4 peer group spines
-        neighbor 10.1.2.4 password 7 qEWAlLTC4nfcCtaj0TBNoQ==
-        !
-        vlan 101
-            rd 65003:10101
-            route-target both 101:10101
-            redistribute learned
-        !
-        vlan 102
-            rd 65003:10102
-            route-target both 102:10102
-            redistribute learned
-        !
-        address-family evpn
-            neighbor evpn-spines activate
-        !
-        address-family ipv4
-            no neighbor evpn-spines activate
-            neighbor spines activate
-            redistribute connected route-map REDIS_CONN
-    !
-    end
+    
 
 ###  6. Проверочная часть. 
 
