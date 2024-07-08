@@ -606,7 +606,39 @@
         Extended Community: Route-Target-AS:1:1 TunnelEncap:tunnelTypeVxlan EvpnRouterMac:50:01:00:27:03:91
         VNI: 10001
 
-#### 6.3 Проверяем доступность шлюзов и хостов.
+#### 6.4 Проверяем наличие префиксов в таблице маршрутизации VRF.
+
+    Leaf1#show ip route vrf vpn-1
+
+    VRF: vpn-1
+    Codes: C - connected, S - static, K - kernel, 
+
+        B I - iBGP, B E - eBGP, R - RIP, I L1 - IS-IS level 1,
+
+    Gateway of last resort is not set
+
+    B E      10.1.3.0/30 [20/0] via VTEP 10.0.0.133 VNI 10001 router-mac 50:01:00:27:03:91 local-interface Vxlan1
+    B E      10.1.3.4/30 [20/0] via VTEP 10.0.0.133 VNI 10001 router-mac 50:01:00:27:03:91 local-interface Vxlan1
+    B E      192.168.1.0/24 [20/0] via VTEP 10.0.0.133 VNI 10001 router-mac 50:01:00:27:03:91 local-interface Vxlan1
+    B E      192.168.2.0/24 [20/0] via VTEP 10.0.0.133 VNI 10001 router-mac 50:01:00:27:03:91 local-interface Vxlan1
+
+    
+    Border-Leaf2#show ip route vrf vpn-2
+
+    VRF: vpn-2
+    Codes: C - connected, S - static, K - kernel, 
+
+        B I - iBGP, B E - eBGP, R - RIP, I L1 - IS-IS level 1,
+
+    Gateway of last resort is not set
+
+    B E      10.1.3.0/30 [20/0] via 10.1.3.6, Ethernet8.2
+    C        10.1.3.4/30 is directly connected, Ethernet8.2
+    B E      192.168.1.0/24 [20/0] via 10.1.3.6, Ethernet8.2
+    C        192.168.2.0/24 is directly connected, Vlan102
+
+
+#### 6.4 Проверяем доступность шлюзов и хостов.
 
     PC1> ping 192.168.1.254
     84 bytes from 192.168.1.254 icmp_seq=1 ttl=64 time=18.129 ms
