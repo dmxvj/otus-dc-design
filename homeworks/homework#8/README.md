@@ -98,52 +98,57 @@
         vrf vpn-1
         ip address 10.1.3.1/30
     
+    
+    Router1#   
+
+    interface GigabitEthernet0/1
+        no ip address
+
+    interface GigabitEthernet0/1.101
+        encapsulation dot1Q 101
+        ip address 10.1.3.2 255.255.255.252
+
 #### 3.5 Создаём BGP сессию между Border Leaf3 и внешним маршрутизатором Router1. 
 
+    Border-Leaf3#
 
+    vrf vpn-1
+        neighbor 10.1.3.2 remote-as 64999
+        neighbor 10.1.3.2 send-community extended
+        redistribute connected
+        !
+        address-family ipv4
+            neighbor 10.1.3.2 activate
 
-### 4. На стороне коммутатора CE создаём агрегированный Port-channel интерфейс.  
+    Router1#
+    
+    router bgp 64999
+    bgp router-id 10.10.10.10
+    bgp log-neighbor-changes
+    timers bgp 1 3
+    neighbor 10.1.3.1 remote-as 65003
+    !
+    address-family ipv4
+        neighbor 10.1.3.1 activate
+        neighbor 10.1.3.1 send-community both
 
-#### 4.1 С активацией протокола LACP.
- 
-    Switch1#
-        interface GigabitEthernet0/0
-        channel-protocol lacp
-        channel-group 1 mode active
+### 4. Создаём аналогичную конфигурацию на Border Leaf2 и внешнем маршрутизаторе Router1.  
 
-        interface GigabitEthernet1/0
-        channel-protocol lacp
-        channel-group 1 mode active
+#### 4.1 Конфиг для Border Leaf2 и Router1 можно посмотреть в Итоговой конфигурации.
 
-#### 4.2 Переводим порт в режим транка.
-
-    Switch1#
-        interface Port-channel1
-        switchport trunk allowed vlan 101,102
-        switchport trunk encapsulation dot1q
-        switchport mode trunk
-
-### 5. Итоговые конфигурации Leaf коммутаторов. 
+### 5. Итоговые конфигурации Leaf и Border коммутаторов, а также внешнего маршрутизатора
 
     Leaf1#show run 
-    !
+
     service routing protocols model multi-agent
     !
     hostname Leaf1
     !
     spanning-tree mode mstp
     !
-    vlan 101-102
+    vlan 101
     !
-    interface Port-Channel1
-        load-interval 30
-        switchport trunk allowed vlan 101-102
-        switchport mode trunk
-    !
-        evpn ethernet-segment
-            identifier 0000:0000:0000:0000:0001
-            route-target import 00:00:00:00:00:01
-        lacp system-id 0000.0000.0001
+    vrf instance vpn-1
     !
     interface Ethernet1
         description to-Spine1
@@ -159,8 +164,8 @@
         ip address 10.1.2.1/31
         bfd interval 100 min-rx 100 multiplier 3
     !
-    interface Ethernet5
-        channel-group 1 mode active
+    interface Ethernet3
+        switchport access vlan 101
     !
     interface Loopback0
         ip address 10.0.0.11/32
@@ -168,23 +173,16 @@
     interface Loopback1
         ip address 10.0.0.111/32
     !
-    interface Vlan101
-        description IRB VLAN101
-        ip address virtual 192.168.1.254/24
-    !
-    interface Vlan102
-        description IRB VLAN102
-        ip address virtual 192.168.2.254/24
+    interface Management1
     !
     interface Vxlan1
         vxlan source-interface Loopback1
         vxlan udp-port 4789
         vxlan vlan 101 vni 10101
-        vxlan vlan 102 vni 10102
-    !
-    ip virtual-router mac-address 00:1c:73:00:00:aa
+        vxlan vrf vpn-1 vni 10001
     !
     ip routing
+    ip routing vrf vpn-1
     !
     ip prefix-list connected-to-bgp
         seq 10 permit 10.0.0.0/24 ge 32
@@ -215,24 +213,25 @@
         neighbor 10.1.1.0 password 7 B7rhB/vPbn0K7ECNtz1K5w==
         neighbor 10.1.2.0 peer group spines
         neighbor 10.1.2.0 password 7 qJkVzQI8BJZIFaQJU7/LYQ==
-        !
+    !
         vlan 101
             rd 65001:10101
             route-target both 101:10101
             redistribute learned
-        !
-        vlan 102
-            rd 65001:10102
-            route-target both 102:10102
-            redistribute learned
-        !
+    !
         address-family evpn
             neighbor evpn-spines activate
-        !
+    !
         address-family ipv4
             no neighbor evpn-spines activate
             neighbor spines activate
             redistribute connected route-map REDIS_CONN
+    !
+        vrf vpn-1
+            rd 65001:1
+            route-target import evpn 1:1
+            route-target export evpn 1:1
+            router-id 10.0.0.11
     !
     end
 
