@@ -1,12 +1,12 @@
 ## Домашнее задание №8
 
-### 1. Схема сети и план нумерации для Underlay eBGP, MP-BGP L2VPN EVPN, L3 VXLAN VRF Routing.
+### 1. Схема сети и план нумерации для Underlay eBGP, MP-BGP L2VPN EVPN, Overlay VXLAN.
 
 ![](layout8-type-5.png)
 
 ### 2. План адресации.
 
-#### 2.1 IP Loopback адреса и номера AS. 
+#### 2.1 IP Loopback адреса и номера AS.
 
 | Hostname |   Loopback0  |   Loopback1   | ASN   |
 | :------: | :-----------:|:-------------:|:------:
@@ -25,55 +25,82 @@
 
 #### 2.3 Адреса хостов.
 
-|  Hostname |        PC1        |        PC2        |        PC3        |        PC4        |
-| :--------:| :----------------:|:-----------------:|:-----------------:|:-----------------:|
-|  IP       |  192.168.1.1/24   |  192.168.2.2/24   |  192.168.1.3/24   |  192.168.2.4/24   |
-|  Gateway  |  192.168.1.254/24 |  192.168.2.254/24 | 192.168.1.254/24  |  192.168.2.254/24 |
-|   VLAN    |        101        |         102       |         101       |        102        |
-|   MAC     | 00:50:79:66:68:06 | 00:50:79:66:68:07 | 00:50:79:66:68:08 | 00:50:79:66:68:09 |
+|  Hostname |        PC1        |        PC2        |
+| :--------:| :----------------:|:-----------------:|
+|  IP       |  192.168.1.1/24   |  192.168.2.2/24   |
+|  Gateway  |  192.168.1.254/24 |  192.168.2.254/24 |
+|   VLAN    |        101        |         102       |
+|   MAC     | 00:50:79:66:68:06 | 00:50:79:66:68:07 |
 
-### 3. План развёртывания ESI-LAG на Leaf на коммутаторах.
+### 3. Подключение внешнего маршрутизатора к Border Leaf коммутаторам.
 
-### Примечание: Underlay eBGP был развёрнут в ДЗ №4; L2 Overlay VXLAN в ДЗ №5, L3 VTEP в ДЗ №6. 
+### Примечание: Underlay eBGP был развёрнут в ДЗ №4; L2 Overlay VXLAN в ДЗ №5, L3 VXLAN Gateway в ДЗ №6. 
  
-#### 3.1 Создаём агрегированный интерфейс Port-channel на двух коммутаторах, работающего под контролем протокола LACP.
+#### 3.1 Создаём VRF для первого пользователя на Leaf1 и на Border Leaf3.
  
-    Leaf1#
-        interface Ethernet5
-            channel-group 1 mode active
-
-    Leaf2#
-        interface Ethernet5
-            channel-group 1 mode active
-
-#### 3.2 Переводим его в режим trunk и разрешаем прохождение виланов 101 и 102 на двух коммутаторах.
-
-    Leaf1#
-        interface Port-Channel1
-            switchport trunk allowed vlan 101-102
-            switchport mode trunk
- 
-    Leaf2#
-        interface Port-Channel1
-            switchport trunk allowed vlan 101-102
-            switchport mode trunk
-
-#### 3.3 Назначаем агрегированному интерфейсу уникальный системный идентификатор Id. 
- 
-    interface Port-Channel1
-        lacp system-id 0000.0000.0001
- 
-#### 3.4 Создаём на агрегированном интерфейсе ESI - EVPN сегмент 10-байтный идентификатор необходимого для multihoming. 
-
-    interface Port-Channel1
-        evpn ethernet-segment
-            identifier 0000:0000:0000:0000:0001
+    Leaf1#sh run | s vrf
     
-#### 3.5 Назначаем 6-байтный Route-Target на ESI для принятия EVPN апдейтов Type-1 и Type-4. 
+    vrf instance vpn-1
 
-    interface Port-Channel1
-        evpn ethernet-segment
-            route-target import 00:00:00:00:00:01
+    ip routing vrf vpn-1
+
+    router bgp 65001
+        vrf vpn-1
+            rd 65001:1
+            route-target import evpn 1:1
+            route-target export evpn 1:1
+            router-id 10.0.0.11
+
+    Border-Leaf3#sh run | s vrf
+
+    vrf instance vpn-1
+
+    ip routing vrf vpn-1
+
+    router bgp 65003
+        vrf vpn-1
+            rd 65003:1
+            route-target import evpn 1:1
+            route-target export evpn 1:1
+            router-id 10.0.0.33
+
+#### 3.2 Определяем Gateway в VRF для 1ого пользователя на Border Leaf3.
+
+    Border-Leaf3#
+
+    interface Vlan101
+        description IRB VLAN101
+        vrf vpn-1
+        ip address 192.168.1.254/24
+
+#### 3.3 Дополнительно инкасулируем трафик пользователя в VRF в VXLAN. 
+ 
+    Leaf1#
+
+    interface Vxlan1
+        vxlan vrf vpn-1 vni 10001
+ 
+    
+    Border-Leaf3#
+
+    interface Vxlan1
+        vxlan vrf vpn-1 vni 10001
+
+#### 3.4 Создаём L3 связность между Border Leaf3 и внешним маршрутизатором Router1. 
+
+    Border-Leaf3#
+
+    interface Ethernet8
+        no switchport
+
+    interface Ethernet8.101
+        encapsulation dot1q vlan 101
+        vrf vpn-1
+        ip address 10.1.3.1/30
+    
+#### 3.5 Создаём BGP сессию между Border Leaf3 и внешним маршрутизатором Router1. 
+
+
 
 ### 4. На стороне коммутатора CE создаём агрегированный Port-channel интерфейс.  
 
