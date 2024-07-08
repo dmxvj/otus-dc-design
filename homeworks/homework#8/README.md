@@ -77,7 +77,7 @@
         vrf vpn-1
         ip address 192.168.1.254/24
 
-#### 3.3 Дополнительно инкасулируем трафик пользователя в VRF в VXLAN. 
+#### 3.3 Дополнительно инкапсулируем трафик пользователя в VRF в VXLAN. 
  
     Leaf1#
 
@@ -628,4 +628,3 @@
     84 bytes from 192.168.2.1 icmp_seq=3 ttl=61 time=25.119 ms
     84 bytes from 192.168.2.1 icmp_seq=4 ttl=61 time=30.175 ms
     84 bytes from 192.168.2.1 icmp_seq=5 ttl=61 time=28.071 ms
-    
